@@ -1,19 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { 
-  BarChart3, 
-  Calendar,
-  Target, 
-  TrendingUp, 
-  Download,
-  Award,
-  Clock,
-  Zap,
-  Scale,
-  Ruler,
-  Activity
-} from 'lucide-react';
+import { ChartBar as BarChart3, Calendar, Target, TrendingUp, Download, Award, Clock, Zap, Scale, Ruler, Activity } from 'lucide-react';
 
 interface ReportTabProps {
   userSetupData?: any;

@@ -3,17 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  ArrowLeft, 
-  AlertTriangle, 
-  Shield, 
-  Upload, 
-  Camera,
-  CheckCircle,
-  XCircle,
-  Trophy,
-  Coins
-} from 'lucide-react';
+import { ArrowLeft, TriangleAlert as AlertTriangle, Shield, Upload, Camera, CircleCheck as CheckCircle, Circle as XCircle, Trophy, Coins } from 'lucide-react';
 
 interface VideoProcessorProps {
   videoFile: File | null;
