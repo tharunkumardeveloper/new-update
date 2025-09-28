@@ -262,28 +262,6 @@ const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen,
             <h2 className="text-xl font-bold">Challenges</h2>
           </div>
           
-          {/* Challenge Filter Tags */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Button
-              variant={selectedChallengeFilter === null ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedChallengeFilter(null)}
-              className="rounded-full h-8 text-xs"
-            >
-              All
-            </Button>
-            {challengeTags.map((tag) => (
-              <Button
-                key={tag}
-                variant={selectedChallengeFilter === tag ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setSelectedChallengeFilter(tag)}
-                className="rounded-full h-8 text-xs"
-              >
-                {tag}
-              </Button>
-            ))}
-          </div>
           
           {/* Horizontal Scrollable Challenge Cards */}
           <div className="flex space-x-4 overflow-x-auto pb-3 scrollbar-hide">
@@ -294,12 +272,11 @@ const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen,
                 onClick={() => onChallengeRedirect?.(challenge.id)}
               >
                 <div 
-                  className="h-24 bg-cover bg-center relative"
+                  className="h-24 bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${getChallengeImage(challenge.id)})`
                   }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                 </div>
                 <CardContent className={`p-3 ${challenge.type} text-white`}>
                   <h3 className="font-semibold text-sm text-white leading-tight mb-2">
