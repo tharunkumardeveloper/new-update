@@ -42,7 +42,7 @@ import sitUpsImage from '@/assets/activities/sit-ups.jpg';
 import shuttleRunGeneralImage from '@/assets/activities/shuttle-run.jpg';
 import verticalJumpImage from '@/assets/activities/vertical-jump.jpg';
 import pushupImage from '@/assets/activities/pushup.jpg';
-import pullupImage from '@/assets/activities/pullup.jpg';
+import pullupImage from '@/assets/activities/pullup.webp';
 
 interface HomeScreenProps {
   userRole: 'athlete' | 'coach' | 'admin';
