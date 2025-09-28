@@ -11,7 +11,8 @@ import {
   Clock,
   Zap,
   Scale,
-  Ruler
+  Ruler,
+  Activity
 } from 'lucide-react';
 
 interface ReportTabProps {
@@ -19,6 +20,9 @@ interface ReportTabProps {
 }
 
 const ReportTab = ({ userSetupData }: ReportTabProps) => {
+  // Get workout history from localStorage
+  const workoutHistory = JSON.parse(localStorage.getItem('workout_history') || '[]');
+  
   const weeklyStats = [
     { day: 'Mon', value: 85 },
     { day: 'Tue', value: 92 },
@@ -78,6 +82,45 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
         <p className="text-muted-foreground">Track your fitness progress</p>
       </div>
 
+      {/* Recent Workouts */}
+      {workoutHistory.length > 0 && (
+        <Card className="card-elevated">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center space-x-2">
+              <Activity className="w-5 h-5 text-primary" />
+              <span>Recent Workouts</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {workoutHistory.slice(-5).reverse().map((workout: any, index: number) => (
+                <div key={workout.id || index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-lg">💪</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm">{workout.activityName}</h4>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(workout.timestamp).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <Badge 
+                      className={`text-xs ${workout.posture === 'Good' ? 'bg-success/10 text-success border-success' : 'bg-warning/10 text-warning border-warning'}`}
+                      variant="outline"
+                    >
+                      {workout.posture}
+                    </Badge>
+                    <p className="text-xs text-muted-foreground mt-1">{workout.setsCompleted} sets</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       {/* BMI Tracker */}
       <Card className="mb-6 card-elevated">
         <CardHeader className="pb-3">
@@ -124,7 +167,7 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
               <Zap className="w-5 h-5 text-primary mr-2" />
-              <span className="text-2xl font-bold text-primary">87%</span>
+              <span className="text-2xl font-bold text-primary">{workoutHistory.length > 0 ? '92%' : '87%'}</span>
             </div>
             <p className="text-sm text-muted-foreground">Weekly Goal</p>
           </CardContent>
@@ -134,7 +177,7 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
               <Clock className="w-5 h-5 text-success mr-2" />
-              <span className="text-2xl font-bold text-success">8.5h</span>
+              <span className="text-2xl font-bold text-success">{workoutHistory.length > 0 ? '9.2h' : '8.5h'}</span>
             </div>
             <p className="text-sm text-muted-foreground">This Week</p>
           </CardContent>
@@ -167,7 +210,7 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
           <div className="mt-4 pt-4 border-t">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Average completion</span>
-              <span className="font-medium text-primary">85%</span>
+              <span className="font-medium text-primary">{workoutHistory.length > 0 ? '88%' : '85%'}</span>
             </div>
           </div>
         </CardContent>
@@ -182,6 +225,18 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {workoutHistory.length > 0 && (
+            <div className="p-3 bg-primary/10 rounded-lg border border-primary/20">
+              <div className="flex items-start space-x-3">
+                <div className="w-2 h-2 bg-primary rounded-full mt-2" />
+                <div>
+                  <p className="text-sm font-medium text-primary">Recent Activity</p>
+                  <p className="text-xs text-muted-foreground">You've completed {workoutHistory.length} workout{workoutHistory.length !== 1 ? 's' : ''} with AI analysis</p>
+                </div>
+              </div>
+            </div>
+          )}
+          
           <div className="p-3 bg-success/10 rounded-lg border border-success/20">
             <div className="flex items-start space-x-3">
               <div className="w-2 h-2 bg-success rounded-full mt-2" />

@@ -5,12 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ArrowLeft, 
   X,
-  Play,
-  Upload,
-  Camera,
-  Download,
-  Award,
-  RefreshCw
+  Target,
+  Trophy,
+  Clock,
+  Users
 } from 'lucide-react';
 
 interface ActivityDetailProps {
@@ -21,6 +19,7 @@ interface ActivityDetailProps {
     muscles: string;
   };
   onBack: () => void;
+  onStartWorkout: () => void;
 }
 
 // Activity content database
@@ -351,9 +350,7 @@ const activityContent = {
   }
 };
 
-const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
-  const [stage, setStage] = useState<'detail' | 'workout' | 'processing' | 'output'>('detail');
-  const [processingStep, setProcessingStep] = useState(0);
+const ActivityDetail = ({ activity, onBack, onStartWorkout }: ActivityDetailProps) => {
 
   const content = activityContent[activity.name as keyof typeof activityContent];
   
@@ -365,259 +362,6 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
     );
   }
 
-  const processingSteps = [
-    'Analyzing video…',
-    'Processing frames…',
-    'Detecting movement…',
-    'Counting reps / events…',
-    'Generating summary…'
-  ];
-
-  const handleModeSelect = (mode: 'upload' | 'record') => {
-    setStage('processing');
-    setProcessingStep(0);
-    
-    // Simulate processing steps
-    const interval = setInterval(() => {
-      setProcessingStep(prev => {
-        if (prev >= processingSteps.length - 1) {
-          clearInterval(interval);
-          setTimeout(() => setStage('output'), 1000);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 1000);
-  };
-
-  const generateMockData = () => {
-    const baseData: Record<string, any> = {};
-    content.outputFields.forEach(field => {
-      switch (field) {
-        case 'total_reps':
-        case 'correct_reps':
-        case 'successful_reps':
-          baseData[field] = Math.floor(Math.random() * 20) + 10;
-          break;
-        case 'total_time_sec':
-        case 'total_time':
-          baseData[field] = Math.floor(Math.random() * 120) + 30;
-          break;
-        case 'max_jump_height_m':
-        case 'max_height_m':
-          baseData[field] = (Math.random() * 0.5 + 0.3).toFixed(2);
-          break;
-        case 'max_distance_m':
-          baseData[field] = (Math.random() * 2 + 1.5).toFixed(2);
-          break;
-        default:
-          baseData[field] = Math.floor(Math.random() * 100);
-      }
-    });
-    return baseData;
-  };
-
-  const mockData = generateMockData();
-
-  if (stage === 'output') {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-subtle border-b safe-top">
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between max-w-md mx-auto">
-              <Button variant="ghost" size="sm" onClick={() => setStage('workout')} className="tap-target">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <h1 className="text-lg font-semibold">Workout Results</h1>
-              <Button variant="ghost" size="sm" onClick={onBack} className="tap-target">
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        <div className="px-4 pb-20 max-w-md mx-auto">
-          {/* Video Player Area */}
-          <div className="mb-6 relative">
-            <div className="aspect-video bg-gray-900 rounded-lg overflow-hidden relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <Play className="w-16 h-16 mx-auto mb-2 opacity-70" />
-                  <p className="text-sm opacity-70">Annotated Video Analysis</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Summary Metrics */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            {Object.entries(mockData).slice(0, 4).map(([key, value]) => (
-              <Card key={key} className="card-elevated">
-                <CardContent className="p-4 text-center">
-                  <div className="text-2xl font-bold text-primary mb-1">{value}</div>
-                  <p className="text-xs text-muted-foreground capitalize">
-                    {key.replace(/_/g, ' ')}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* CSV Table */}
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Detailed Analysis</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      {content.outputFields.slice(0, 3).map(field => (
-                        <th key={field} className="text-left p-2 capitalize">
-                          {field.replace(/_/g, ' ')}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <tr key={i} className="border-b">
-                        {content.outputFields.slice(0, 3).map(field => (
-                          <td key={field} className="p-2">
-                            {mockData[field] || Math.floor(Math.random() * 100)}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Action Buttons */}
-          <div className="space-y-3">
-            <Button className="w-full btn-hero" size="lg">
-              <Download className="w-5 h-5 mr-2" />
-              Download Report
-            </Button>
-            
-            <div className="grid grid-cols-2 gap-3">
-              <Button 
-                variant="outline" 
-                size="lg"
-                onClick={() => {
-                  // Mock badge animation
-                  alert('🏆 Badge Unlocked! +50 XP, +25 Coins');
-                }}
-              >
-                <Award className="w-4 h-4 mr-2" />
-                Submit
-              </Button>
-              <Button variant="outline" size="lg" onClick={() => setStage('workout')}>
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Redo
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 'processing') {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-6 p-4 max-w-md">
-          <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-          
-          <div className="space-y-2">
-            {processingSteps.map((step, index) => (
-              <div
-                key={index}
-                className={`transition-all duration-500 ${
-                  index <= processingStep 
-                    ? 'opacity-100 text-primary font-medium' 
-                    : 'opacity-30 text-muted-foreground'
-                }`}
-              >
-                {index < processingStep && '✓ '}
-                {step}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (stage === 'workout') {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-subtle border-b safe-top">
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between max-w-md mx-auto">
-              <Button variant="ghost" size="sm" onClick={() => setStage('detail')} className="tap-target">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <h1 className="text-lg font-semibold">Choose Mode</h1>
-              <Button variant="ghost" size="sm" onClick={onBack} className="tap-target">
-                <X className="w-5 h-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Cover Image with Overlay */}
-        <div className="relative">
-          <div className="aspect-video bg-gradient-to-r from-gray-300 to-gray-400 relative">
-            {activity.image ? (
-              <img 
-                src={activity.image} 
-                alt={activity.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-6xl">
-                💪
-              </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 to-purple-700/60 flex items-center justify-center">
-              <h2 className="text-2xl font-bold text-white">Choose Mode</h2>
-            </div>
-          </div>
-        </div>
-
-        {/* Mode Selection */}
-        <div className="px-4 py-8 max-w-md mx-auto">
-          <div className="grid grid-cols-1 gap-6">
-            <Button
-              onClick={() => handleModeSelect('upload')}
-              className="h-24 bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary/5 text-foreground flex flex-col items-center justify-center space-y-2"
-              variant="outline"
-            >
-              <Upload className="w-8 h-8" />
-              <span className="font-semibold">Upload Video</span>
-            </Button>
-
-            <Button
-              onClick={() => handleModeSelect('record')}
-              className="h-24 bg-white border-2 border-gray-200 hover:border-primary hover:bg-primary/5 text-foreground flex flex-col items-center justify-center space-y-2"
-              variant="outline"
-            >
-              <Camera className="w-8 h-8" />
-              <span className="font-semibold">Record Video</span>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Detail Stage
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -702,13 +446,36 @@ const ActivityDetail = ({ activity, onBack }: ActivityDetailProps) => {
           </div>
         </div>
 
+        {/* Quick Stats */}
+        <div className="py-6 border-b">
+          <h3 className="font-semibold mb-3">Exercise Stats</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-3 rounded-lg bg-secondary/30">
+              <Target className="w-5 h-5 mx-auto mb-1 text-primary" />
+              <div className="text-sm font-medium">Difficulty</div>
+              <div className="text-xs text-muted-foreground">Intermediate</div>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-secondary/30">
+              <Clock className="w-5 h-5 mx-auto mb-1 text-success" />
+              <div className="text-sm font-medium">Duration</div>
+              <div className="text-xs text-muted-foreground">5-10 min</div>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-secondary/30">
+              <Users className="w-5 h-5 mx-auto mb-1 text-info" />
+              <div className="text-sm font-medium">Popularity</div>
+              <div className="text-xs text-muted-foreground">High</div>
+            </div>
+          </div>
+        </div>
+
         {/* Proceed Button */}
         <div className="py-6">
           <Button 
-            onClick={() => setStage('workout')}
+            onClick={onStartWorkout}
             className="w-full btn-hero"
             size="lg"
           >
+            <Trophy className="w-5 h-5 mr-2" />
             Proceed to Workout
           </Button>
         </div>
