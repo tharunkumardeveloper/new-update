@@ -3,28 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Search, 
-  Settings, 
-  User, 
-  Target, 
-  Trophy, 
-  Calendar,
-  Zap,
-  Star,
-  Users,
-  Activity,
-  BookOpen,
-  MessageSquare,
-  Plus,
-  Filter,
-  Download,
-  Eye,
-  Send,
-  BarChart3,
-  Shield,
-  UserCheck
-} from 'lucide-react';
+import { Search, Settings, User, Target, Trophy, Calendar, Zap, Star, Users, Activity, BookOpen, MessageSquare, Plus, Filter, Download, Eye, Send, ChartBar as BarChart3, Shield, UserCheck } from 'lucide-react';
 
 interface SAIAdminDashboardProps {
   userName: string;
