@@ -19,44 +19,85 @@ const BadgesScreen = ({ onBack }: BadgesScreenProps) => {
   ];
 
   const strengthBadges = [
-    'Strength Novice', 'Push-up Starter', 'Pull-up Beginner', 'Medicine Ball Basic', 'Upper Body Builder',
-    'Core Crusher', 'Total Power', 'Push-up Master', 'Resistance Pro', 'Strength Elite'
+    { name: '💪 Strength Starter', icon: '💪' }, 
+    { name: '🔨 Push-up Powerhouse', icon: '🔨' }, 
+    { name: '⚡ Pull-up Pro', icon: '⚡' }, 
+    { name: '🏋️ Medicine Ball Master', icon: '🏋️' }, 
+    { name: '🦾 Upper Body Beast', icon: '🦾' },
+    { name: '🔥 Core Crusher', icon: '🔥' }, 
+    { name: '⚔️ Total Power', icon: '⚔️' }, 
+    { name: '👑 Push-up King', icon: '👑' }, 
+    { name: '🎯 Resistance Ruler', icon: '🎯' }, 
+    { name: '🏆 Strength Elite', icon: '🏆' }
   ];
 
   const enduranceBadges = [
-    'Endurance Starter', '800m Runner', 'Shuttle Sprinter', 'Distance Walker', 'Cardio Champion',
-    'Marathon Prep', 'Sprint Master', 'HIIT Hero', 'Stamina Builder', 'Endurance Elite'
+    { name: '🏃 Endurance Sprinter', icon: '🏃' }, 
+    { name: '🎽 800m Runner', icon: '🎽' }, 
+    { name: '💨 Shuttle Speedster', icon: '💨' }, 
+    { name: '🚶 Distance Walker', icon: '🚶' }, 
+    { name: '❤️ Cardio Champion', icon: '❤️' },
+    { name: '🏃‍♂️ Marathon Master', icon: '🏃‍♂️' }, 
+    { name: '⚡ Sprint Specialist', icon: '⚡' }, 
+    { name: '🔥 HIIT Hero', icon: '🔥' }, 
+    { name: '⚡ Stamina Soldier', icon: '⚡' }, 
+    { name: '🏆 Endurance Elite', icon: '🏆' }
   ];
 
   const flexibilityBadges = [
-    'Flexibility Focus', 'Sit-and-Reach Pro', 'Cobra Master', 'Chest Opener', 'Flow Expert',
-    'Morning Stretcher', 'Deep Stretch Pro', 'Yoga Beginner', 'Mobility Master', 'Zen Flexibility'
+    { name: '🤸 Flexibility Master', icon: '🤸' }, 
+    { name: '📐 Sit-and-Reach Star', icon: '📐' }, 
+    { name: '🐍 Cobra Commander', icon: '🐍' }, 
+    { name: '💫 Chest Opener', icon: '💫' }, 
+    { name: '🌊 Flow Expert', icon: '🌊' },
+    { name: '🌅 Morning Stretcher', icon: '🌅' }, 
+    { name: '🧘 Deep Stretch Guru', icon: '🧘' }, 
+    { name: '🧘‍♀️ Yoga Warrior', icon: '🧘‍♀️' }, 
+    { name: '🤸‍♂️ Mobility Maestro', icon: '🤸‍♂️' }, 
+    { name: '☯️ Zen Flexibility', icon: '☯️' }
   ];
 
   const calisthenicsBadges = [
-    'Calisthenics Basic', 'Jumping Jack Pro', 'Plank Master', 'Body Weight Expert', 'Movement Flow',
-    'Dynamic Trainer', 'Functional Fit', 'No Equipment Pro', 'Street Workout', 'Calisthenics Elite'
+    { name: '🔥 Calisthenics Challenger', icon: '🔥' }, 
+    { name: '🦘 Jumping Jack Jedi', icon: '🦘' }, 
+    { name: '🏋️‍♀️ Plank Perfectionist', icon: '🏋️‍♀️' }, 
+    { name: '🤸‍♂️ Body Weight Boss', icon: '🤸‍♂️' }, 
+    { name: '💃 Movement Maestro', icon: '💃' },
+    { name: '⚡ Dynamic Dynamo', icon: '⚡' }, 
+    { name: '🎯 Functional Fighter', icon: '🎯' }, 
+    { name: '🚫 No Equipment Ninja', icon: '🚫' }, 
+    { name: '🏙️ Street Workout Star', icon: '🏙️' }, 
+    { name: '👑 Calisthenics King', icon: '👑' }
   ];
 
   const paraAthleteBadges = [
-    'Para Strong', 'Knee Push-up Pro', 'Assisted Training', 'Modified Master', 'Adaptive Athlete',
-    'Inclusive Fitness', 'Supported Strength', 'Accessibility Pro', 'Assisted Cardio', 'Para Elite'
+    { name: '♿ Para Warrior', icon: '♿' }, 
+    { name: '🔥 Knee Push-up Pro', icon: '🔥' }, 
+    { name: '🤝 Assisted Ace', icon: '🤝' }, 
+    { name: '🎯 Modified Master', icon: '🎯' }, 
+    { name: '🏃‍♀️ Adaptive Athlete', icon: '🏃‍♀️' },
+    { name: '🌟 Inclusive Star', icon: '🌟' }, 
+    { name: '💪 Supported Strength', icon: '💪' }, 
+    { name: '♿ Accessibility Ace', icon: '♿' }, 
+    { name: '❤️ Assisted Cardio', icon: '❤️' }, 
+    { name: '🏆 Para Elite', icon: '🏆' }
   ];
 
-  const allBadgeNames = [
+  const allBadges = [
     ...strengthBadges, ...enduranceBadges, ...flexibilityBadges, ...calisthenicsBadges, ...paraAthleteBadges
   ];
 
   const badges = Array.from({ length: 50 }, (_, i) => {
     const categoryIndex = Math.floor(i / 10);
     const category = badgeCategories[categoryIndex];
+    const badgeInfo = allBadges[i] || { name: `${category.name} Badge ${i + 1}`, icon: category.icon };
     const isEarned = i < 12; // User has earned first 12 badges
     
     return {
       id: i + 1,
-      name: allBadgeNames[i] || `${category.name} Badge ${i + 1}`,
+      name: badgeInfo.name,
       description: `Master ${category.name.toLowerCase()} activities and unlock advanced training`,
-      icon: category.icon,
+      icon: badgeInfo.icon,
       color: category.color,
       earned: isEarned,
       progress: isEarned ? 100 : Math.floor(Math.random() * 80) + 10,

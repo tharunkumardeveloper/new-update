@@ -68,11 +68,11 @@ const RoadmapTab = ({ onViewAllBadges }: RoadmapTabProps) => {
 
   // User's current badges (5-badge showcase) - recent + upcoming
   const userBadges = [
-    { id: 1, name: 'Strength Novice', icon: '💪', earned: true, current: false, category: 'Strength' },
-    { id: 2, name: 'Endurance Starter', icon: '🏃', earned: true, current: false, category: 'Endurance' },
-    { id: 3, name: 'Flexibility Focus', icon: '🧘', earned: true, current: true, category: 'Flexibility' }, // Current badge with glow
-    { id: 4, name: 'Calisthenics Basic', icon: '🤸', earned: false, current: false, progress: 65, category: 'Calisthenics' },
-    { id: 5, name: 'Para Elite', icon: '♿', earned: false, current: false, progress: 20, category: 'Para-Athlete' }
+    { id: 1, name: 'Strength Starter', icon: '💪', earned: true, current: false, category: 'Strength' },
+    { id: 2, name: 'Endurance Sprinter', icon: '🏃', earned: true, current: false, category: 'Endurance' },
+    { id: 3, name: 'Flexibility Master', icon: '🤸', earned: true, current: true, category: 'Flexibility' }, // Current badge with glow
+    { id: 4, name: 'Calisthenics Challenger', icon: '🔥', earned: false, current: false, progress: 65, category: 'Calisthenics' },
+    { id: 5, name: 'Para Warrior', icon: '♿', earned: false, current: false, progress: 20, category: 'Para-Athlete' }
   ];
 
   const goals = [

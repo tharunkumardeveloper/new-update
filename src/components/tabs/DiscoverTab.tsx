@@ -112,30 +112,6 @@ const DiscoverTab = () => {
         <p className="text-muted-foreground">Find your next favorite workout</p>
       </div>
 
-      {/* Filter Tags */}
-      <Card className="card-elevated">
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant={selectedFilter === null ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedFilter(null)}
-            >
-              All
-            </Button>
-            {filterCategories.map((category) => (
-              <Button
-                key={category}
-                variant={selectedFilter === category ? "default" : "outline"}
-                size="sm"
-                onClick={() => setSelectedFilter(category)}
-              >
-                {category}
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Trending Section */}
       <Card className="card-elevated">
@@ -204,21 +180,39 @@ const DiscoverTab = () => {
         </div>
       </div>
 
-      {/* Filtered Challenge Catalog */}
+      {/* Featured Challenges (10 total - 2 per category) */}
       <div>
-        <h2 className="text-lg font-semibold mb-4">
-          {selectedFilter ? `${selectedFilter} Challenges` : 'All Challenges'}
-        </h2>
-        <div className="space-y-3 max-h-96 overflow-y-auto">
-          {getFilteredChallenges().map((challengeData, i) => (
-            <Card key={i} id={`challenge-${i + 1}`} className={`cursor-pointer hover:scale-105 transition-transform ${challengeData.color}`}>
+        <h2 className="text-lg font-semibold mb-4">Featured Challenges</h2>
+        <div className="space-y-3">
+          {[
+            // Strength (2)
+            { name: '💪 Strength Starter', type: 'Strength', difficulty: 'Beginner', color: 'challenge-blue', participants: 1234 },
+            { name: '💪 Power Builder', type: 'Strength', difficulty: 'Intermediate', color: 'challenge-blue', participants: 856 },
+            
+            // Endurance (2)
+            { name: '🏃 Endurance Sprinter', type: 'Endurance', difficulty: 'Intermediate', color: 'challenge-purple', participants: 987 },
+            { name: '🏃 Marathon Master', type: 'Endurance', difficulty: 'Advanced', color: 'challenge-purple', participants: 654 },
+            
+            // Flexibility (2)
+            { name: '🤸 Flexibility Focus', type: 'Flexibility', difficulty: 'Beginner', color: 'challenge-light-blue', participants: 2341 },
+            { name: '🤸 Zen Master', type: 'Flexibility', difficulty: 'Intermediate', color: 'challenge-light-blue', participants: 1432 },
+            
+            // Calisthenics (2)
+            { name: '🔥 Calisthenics Challenger', type: 'Calisthenics', difficulty: 'Intermediate', color: 'challenge-gray', participants: 789 },
+            { name: '🔥 Body Weight Beast', type: 'Calisthenics', difficulty: 'Advanced', color: 'challenge-gray', participants: 543 },
+            
+            // Para-Athlete (2)
+            { name: '♿ Para Warrior', type: 'Para-Athlete', difficulty: 'All Levels', color: 'challenge-maroon', participants: 456 },
+            { name: '♿ Adaptive Elite', type: 'Para-Athlete', difficulty: 'Advanced', color: 'challenge-maroon', participants: 321 }
+          ].map((challenge, i) => (
+            <Card key={i} className={`cursor-pointer hover:scale-105 transition-transform ${challenge.color}`}>
               <CardContent className="p-4 text-white">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold mb-1">{challengeData.name}</h3>
-                    <p className="text-xs opacity-90 mb-2">{challengeData.difficulty} Level</p>
+                    <h3 className="font-semibold mb-1">{challenge.name}</h3>
+                    <p className="text-xs opacity-90 mb-2">{challenge.difficulty} Level</p>
                     <Badge variant="outline" className="text-xs bg-white/20 text-white border-white/30">
-                      {Math.floor(Math.random() * 1000) + 100} participants
+                      {challenge.participants} participants
                     </Badge>
                   </div>
                   <Button size="sm" variant="secondary" className="ml-4">

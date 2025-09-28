@@ -41,6 +41,8 @@ import plankImage from '@/assets/activities/plank.jpg';
 import sitUpsImage from '@/assets/activities/sit-ups.jpg';
 import shuttleRunGeneralImage from '@/assets/activities/shuttle-run.jpg';
 import verticalJumpImage from '@/assets/activities/vertical-jump.jpg';
+import pushupImage from '@/assets/activities/pushup.jpg';
+import pullupImage from '@/assets/activities/pullup.jpg';
 
 interface HomeScreenProps {
   userRole: 'athlete' | 'coach' | 'admin';
@@ -136,8 +138,8 @@ const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen,
 
   const allActivities = [
     // Arm exercises
-    { name: 'Push-ups', rating: 4.8, icon: '💪', muscles: 'Chest, Arms', tags: ['Arm', 'Chest'] },
-    { name: 'Pull-ups', rating: 4.9, icon: '🔥', muscles: 'Back, Arms', tags: ['Arm'] },
+    { name: 'Push-ups', rating: 4.8, image: pushupImage, muscles: 'Chest, Arms', tags: ['Arm', 'Chest'] },
+    { name: 'Pull-ups', rating: 4.9, image: pullupImage, muscles: 'Back, Arms', tags: ['Arm'] },
     { name: 'Inclined Push-up', rating: 4.5, image: inclinedPushupImage, muscles: 'Chest, Arms', tags: ['Arm', 'Chest'] },
     { name: 'Knee Push-up', rating: 4.3, image: kneePushupImage, muscles: 'Chest, Arms', tags: ['Arm', 'Chest', 'Para-Athlete'] },
     { name: 'Wide Arm Push-up', rating: 4.6, image: wideArmPushupImage, muscles: 'Chest, Arms', tags: ['Arm', 'Chest'] },
@@ -360,11 +362,10 @@ const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen,
                       backgroundImage: `url(${activity.image})`
                     }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
                   </div>
                 ) : (
                   <div className="h-24 bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-3xl">
-                    {activity.icon}
+                    💪
                   </div>
                 )}
                 <CardContent className="p-3 bg-card text-card-foreground">
