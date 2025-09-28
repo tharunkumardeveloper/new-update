@@ -3,6 +3,7 @@ import LoadingScreen from '@/components/LoadingScreen';
 import AuthFlow from '@/components/auth/AuthFlow';
 import SetupFlow from '@/components/setup/SetupFlow';
 import HomeScreen from '@/components/home/HomeScreen';
+import CoachDashboard from '@/components/home/CoachDashboard';
 import DiscoverTab from '@/components/tabs/DiscoverTab';
 import ReportTab from '@/components/tabs/ReportTab';
 import RoadmapTab from '@/components/tabs/RoadmapTab';
@@ -115,6 +116,11 @@ const Index = () => {
   };
 
   const renderTabContent = () => {
+    // For coach, use different content structure
+    if (userRole === 'coach') {
+      return null; // CoachDashboard handles its own content
+    }
+    
     switch (activeTab) {
       case 'discover':
         return <DiscoverTab />;
@@ -175,7 +181,7 @@ const Index = () => {
     case 'home':
       return (
         <div className="min-h-screen bg-background">
-          {activeTab === 'training' ? (
+          {activeTab === 'training' && userRole !== 'coach' ? (
             <HomeScreen 
               userRole={userRole} 
               userName={userName}
@@ -184,6 +190,14 @@ const Index = () => {
               onProfileOpen={handleProfileOpen}
               onSettingsOpen={handleSettingsOpen}
               onChallengeRedirect={handleChallengeRedirect}
+            />
+          ) : userRole === 'coach' ? (
+            <CoachDashboard
+              userName={userName}
+              onTabChange={setActiveTab}
+              activeTab={activeTab}
+              onProfileOpen={handleProfileOpen}
+              onSettingsOpen={handleSettingsOpen}
             />
           ) : (
             <div className="min-h-screen bg-background">
