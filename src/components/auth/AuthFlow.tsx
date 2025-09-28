@@ -227,7 +227,6 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                   </div>
                 </CardContent>
               </Card>
-              </div>
             </div>
           </CardContent>
         </Card>
