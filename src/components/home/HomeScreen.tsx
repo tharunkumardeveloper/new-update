@@ -203,14 +203,14 @@ const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen,
       {/* Content */}
       <div className="px-4 pb-20 max-w-md mx-auto">
         {/* Search Bar */}
-        <div className="mb-6 relative">
+        <div className="mb-6 relative mt-8">
           <div className={`relative transition-all duration-300 ${
             searchFocus ? 'transform scale-105' : ''
           }`}>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               placeholder="Search workouts, challenges..."
-              className="pl-10 h-12 rounded-xl"
+              className="pl-10 h-12 rounded-xl border-2 border-violet-800 bg-violet-950/20 focus:border-violet-600 focus:bg-violet-900/30"
               onFocus={() => setSearchFocus(true)}
               onBlur={() => setSearchFocus(false)}
             />
