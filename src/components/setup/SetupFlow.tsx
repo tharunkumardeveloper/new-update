@@ -15,6 +15,7 @@ const SetupFlow = ({ onComplete, onSkip }: SetupFlowProps) => {
   const [step, setStep] = useState(1);
   const [userData, setUserData] = useState({
     gender: '',
+    age: '',
     goals: [] as string[],
     isParaAthlete: false,
     disabilityType: '',
@@ -219,6 +220,20 @@ const SetupFlow = ({ onComplete, onSkip }: SetupFlowProps) => {
                     </div>
                   ))}
                 </RadioGroup>
+              </div>
+
+              <div className="space-y-3">
+                <Label htmlFor="age">Age (Optional)</Label>
+                <input
+                  id="age"
+                  type="number"
+                  min="13"
+                  max="100"
+                  value={userData.age}
+                  onChange={(e) => setUserData(prev => ({ ...prev, age: e.target.value }))}
+                  placeholder="Enter your age"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                />
               </div>
 
               <div className="flex justify-between pt-4">

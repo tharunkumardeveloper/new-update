@@ -66,67 +66,67 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
     <div className="space-y-6">
       {/* Overview Cards */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <Card className="border-2 border-black bg-white">
+        <Card className="border-2 border-primary bg-gradient-to-br from-primary/10 to-primary/5">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Users className="w-5 h-5 text-black mr-2" />
-              <span className="text-2xl font-bold text-black">{overviewStats.totalAthletes}</span>
+              <Users className="w-5 h-5 text-primary mr-2" />
+              <span className="text-2xl font-bold text-primary">{overviewStats.totalAthletes}</span>
             </div>
-            <p className="text-sm text-black font-medium">Total Athletes</p>
+            <p className="text-sm text-foreground font-medium">Total Athletes</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-black bg-white">
+        <Card className="border-2 border-success bg-gradient-to-br from-success/10 to-success/5">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <UserCheck className="w-5 h-5 text-black mr-2" />
-              <span className="text-2xl font-bold text-black">{overviewStats.totalCoaches}</span>
+              <UserCheck className="w-5 h-5 text-success mr-2" />
+              <span className="text-2xl font-bold text-success">{overviewStats.totalCoaches}</span>
             </div>
-            <p className="text-sm text-black font-medium">Total Coaches</p>
+            <p className="text-sm text-foreground font-medium">Total Coaches</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-black bg-white">
+        <Card className="border-2 border-info bg-gradient-to-br from-info/10 to-info/5">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Target className="w-5 h-5 text-black mr-2" />
-              <span className="text-2xl font-bold text-black">{overviewStats.activeChallenges}</span>
+              <Target className="w-5 h-5 text-info mr-2" />
+              <span className="text-2xl font-bold text-info">{overviewStats.activeChallenges}</span>
             </div>
-            <p className="text-sm text-black font-medium">Active Challenges</p>
+            <p className="text-sm text-foreground font-medium">Active Challenges</p>
           </CardContent>
         </Card>
 
-        <Card className="border-2 border-black bg-white">
+        <Card className="border-2 border-warning bg-gradient-to-br from-warning/10 to-warning/5">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Trophy className="w-5 h-5 text-black mr-2" />
-              <span className="text-2xl font-bold text-black">{overviewStats.systemBadges}</span>
+              <Trophy className="w-5 h-5 text-warning mr-2" />
+              <span className="text-2xl font-bold text-warning">{overviewStats.systemBadges}</span>
             </div>
-            <p className="text-sm text-black font-medium">System Badges</p>
+            <p className="text-sm text-foreground font-medium">System Badges</p>
           </CardContent>
         </Card>
       </div>
 
       {/* System Activity Chart */}
-      <Card className="border-2 border-black bg-white">
+      <Card className="card-elevated">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center space-x-2">
-            <BarChart3 className="w-5 h-5 text-black" />
-            <span className="text-black">System Activity</span>
+            <BarChart3 className="w-5 h-5 text-primary" />
+            <span>System Activity</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {systemActivity.map((stat) => (
               <div key={stat.day} className="flex items-center space-x-3">
-                <span className="text-sm font-medium w-8 text-black">{stat.day}</span>
-                <div className="flex-1 bg-gray-200 border border-black rounded-full h-3 overflow-hidden">
+                <span className="text-sm font-medium w-8">{stat.day}</span>
+                <div className="flex-1 bg-secondary rounded-full h-3 overflow-hidden">
                   <div 
-                    className="bg-black h-full rounded-full transition-all duration-500"
+                    className="bg-primary h-full rounded-full transition-all duration-500"
                     style={{ width: `${stat.value}%` }}
                   />
                 </div>
-                <span className="text-sm text-black w-8">{stat.value}%</span>
+                <span className="text-sm w-8">{stat.value}%</span>
               </div>
             ))}
           </div>
@@ -134,24 +134,80 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
       </Card>
 
       {/* Challenge Overview */}
-      <Card className="border-2 border-black bg-white">
+      <Card className="card-elevated">
         <CardHeader className="pb-3">
-          <CardTitle className="text-black">Challenge Overview</CardTitle>
+          <CardTitle>Challenge Overview</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {challengeOverview.map((item) => (
-              <div key={item.domain} className="flex items-center justify-between p-3 rounded-lg border border-black">
+              <div key={item.domain} className="flex items-center justify-between p-3 rounded-lg border">
                 <div className="flex items-center space-x-3">
-                  <div className="w-4 h-4 rounded-full bg-black" />
-                  <span className="font-medium text-black">{item.domain}</span>
+                  <div className="w-4 h-4 rounded-full bg-primary" />
+                  <span className="font-medium">{item.domain}</span>
                 </div>
                 <div className="flex space-x-2">
-                  <Badge className="bg-black text-white border-black">{item.active} active</Badge>
-                  <Badge className="bg-white text-black border-black">{item.completed} completed</Badge>
+                  <Badge className="bg-primary text-primary-foreground">{item.active} active</Badge>
+                  <Badge variant="outline">{item.completed} completed</Badge>
                 </div>
               </div>
             ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Top Athletes Leaderboard */}
+      <Card className="card-elevated">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center space-x-2">
+            <Trophy className="w-5 h-5 text-warning" />
+            <span>Top Athletes Leaderboard</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            {[
+              { name: 'Ratheesh Kumar', domain: 'Strength', level: 12, points: 2450, badges: 35, rank: 1 },
+              { name: 'Priya Sharma', domain: 'Endurance', level: 11, points: 2380, badges: 32, rank: 2 },
+              { name: 'Akash Patel', domain: 'Calisthenics', level: 10, points: 2250, badges: 28, rank: 3 },
+              { name: 'Kavya Nair', domain: 'Flexibility', level: 9, points: 2100, badges: 25, rank: 4 },
+              { name: 'Arjun Reddy', domain: 'Para-Athlete', level: 8, points: 1950, badges: 22, rank: 5 },
+              { name: 'Sneha Gupta', domain: 'Strength', level: 8, points: 1890, badges: 21, rank: 6 },
+              { name: 'Vikram Joshi', domain: 'Endurance', level: 7, points: 1750, badges: 19, rank: 7 },
+              { name: 'Rohan Singh', domain: 'Calisthenics', level: 7, points: 1680, badges: 18, rank: 8 }
+            ].map((athlete) => (
+              <div key={athlete.name} className="flex items-center justify-between p-3 rounded-lg border hover:bg-secondary/30 transition-colors">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    athlete.rank === 1 ? 'bg-yellow-500 text-white' :
+                    athlete.rank === 2 ? 'bg-gray-400 text-white' :
+                    athlete.rank === 3 ? 'bg-amber-600 text-white' :
+                    'bg-primary/10 text-primary'
+                  }`}>
+                    {athlete.rank}
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-sm">{athlete.name}</h4>
+                    <p className="text-xs text-muted-foreground">{athlete.domain}</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-4 text-right">
+                  <div>
+                    <div className="text-sm font-medium">Level {athlete.level}</div>
+                    <div className="text-xs text-muted-foreground">{athlete.points} pts</div>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    <Trophy className="w-3 h-3 mr-1" />
+                    {athlete.badges}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 text-center">
+            <Button variant="outline" size="sm">
+              View Full Leaderboard
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -178,16 +234,16 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
       {/* Athletes List */}
       <div className="space-y-3">
         {athletes.map((athlete) => (
-          <Card key={athlete.id} className="border-2 border-black bg-white">
+          <Card key={athlete.id} className="card-elevated">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="font-semibold text-black">{athlete.name}</h3>
-                  <p className="text-sm text-gray-600">Coach: {athlete.coach}</p>
+                  <h3 className="font-semibold">{athlete.name}</h3>
+                  <p className="text-sm text-muted-foreground">Coach: {athlete.coach}</p>
                 </div>
                 <div className="flex space-x-2">
-                  <Badge className="bg-black text-white border-black">Level {athlete.level}</Badge>
-                  <Badge className={athlete.status === 'Active' ? 'bg-green-100 text-green-800 border-green-800' : 'bg-red-100 text-red-800 border-red-800'}>
+                  <Badge className="bg-primary text-primary-foreground">Level {athlete.level}</Badge>
+                  <Badge className={athlete.status === 'Active' ? 'bg-success/10 text-success border-success' : 'bg-destructive/10 text-destructive border-destructive'}>
                     {athlete.status}
                   </Badge>
                 </div>
@@ -195,12 +251,12 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
               
               <div className="grid grid-cols-2 gap-4 mb-3 text-center">
                 <div>
-                  <div className="text-sm font-medium text-black">{athlete.challenges}</div>
-                  <div className="text-xs text-gray-600">Challenges</div>
+                  <div className="text-sm font-medium">{athlete.challenges}</div>
+                  <div className="text-xs text-muted-foreground">Challenges</div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-black">{athlete.badges}</div>
-                  <div className="text-xs text-gray-600">Badges</div>
+                  <div className="text-sm font-medium">{athlete.badges}</div>
+                  <div className="text-xs text-muted-foreground">Badges</div>
                 </div>
               </div>
 
@@ -226,24 +282,24 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
       {/* Coaches List */}
       <div className="space-y-3">
         {coaches.map((coach) => (
-          <Card key={coach.id} className="border-2 border-black bg-white">
+          <Card key={coach.id} className="card-elevated">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="font-semibold text-black">{coach.name}</h3>
-                  <p className="text-sm text-gray-600">{coach.specialization}</p>
+                  <h3 className="font-semibold">{coach.name}</h3>
+                  <p className="text-sm text-muted-foreground">{coach.specialization}</p>
                 </div>
-                <Badge className="bg-green-100 text-green-800 border-green-800">{coach.status}</Badge>
+                <Badge className="bg-success/10 text-success border-success">{coach.status}</Badge>
               </div>
               
               <div className="grid grid-cols-2 gap-4 mb-3 text-center">
                 <div>
-                  <div className="text-sm font-medium text-black">{coach.athletes}</div>
-                  <div className="text-xs text-gray-600">Athletes</div>
+                  <div className="text-sm font-medium">{coach.athletes}</div>
+                  <div className="text-xs text-muted-foreground">Athletes</div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium text-black">{coach.experience}</div>
-                  <div className="text-xs text-gray-600">Experience</div>
+                  <div className="text-sm font-medium">{coach.experience}</div>
+                  <div className="text-xs text-muted-foreground">Experience</div>
                 </div>
               </div>
 
@@ -268,31 +324,31 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
     <div className="space-y-6">
       {/* Export Options */}
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" size="lg" className="border-black text-black hover:bg-black hover:text-white">
+        <Button variant="outline" size="lg">
           <Download className="w-4 h-4 mr-2" />
           Export System Data
         </Button>
-        <Button variant="outline" size="lg" className="border-black text-black hover:bg-black hover:text-white">
+        <Button variant="outline" size="lg">
           <BarChart3 className="w-4 h-4 mr-2" />
           Generate Report
         </Button>
       </div>
 
       {/* System Performance */}
-      <Card className="border-2 border-black bg-white">
+      <Card className="card-elevated">
         <CardHeader>
-          <CardTitle className="text-black">System Performance</CardTitle>
+          <CardTitle>System Performance</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-4 rounded-lg border border-black">
-                <div className="text-2xl font-bold text-black">94%</div>
-                <p className="text-sm text-gray-600">System Uptime</p>
+              <div className="text-center p-4 rounded-lg bg-success/10">
+                <div className="text-2xl font-bold text-success">94%</div>
+                <p className="text-sm text-muted-foreground">System Uptime</p>
               </div>
-              <div className="text-center p-4 rounded-lg border border-black">
-                <div className="text-2xl font-bold text-black">8.7</div>
-                <p className="text-sm text-gray-600">Avg User Rating</p>
+              <div className="text-center p-4 rounded-lg bg-primary/10">
+                <div className="text-2xl font-bold text-primary">8.7</div>
+                <p className="text-sm text-muted-foreground">Avg User Rating</p>
               </div>
             </div>
           </div>
@@ -300,9 +356,9 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
       </Card>
 
       {/* Usage Analytics */}
-      <Card className="border-2 border-black bg-white">
+      <Card className="card-elevated">
         <CardHeader>
-          <CardTitle className="text-black">Usage Analytics</CardTitle>
+          <CardTitle>Usage Analytics</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -312,11 +368,11 @@ const SAIAdminDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, on
               { metric: 'Badge Earning Rate', value: '3.2/user', trend: '+8%' },
               { metric: 'Coach Engagement', value: '91%', trend: '+3%' }
             ].map((item, index) => (
-              <div key={index} className="flex justify-between items-center p-3 border border-black rounded-lg">
-                <span className="text-black font-medium">{item.metric}</span>
+              <div key={index} className="flex justify-between items-center p-3 border rounded-lg">
+                <span className="font-medium">{item.metric}</span>
                 <div className="flex items-center space-x-2">
-                  <span className="text-black font-bold">{item.value}</span>
-                  <Badge className="bg-green-100 text-green-800 border-green-800">{item.trend}</Badge>
+                  <span className="font-bold">{item.value}</span>
+                  <Badge className="bg-success/10 text-success border-success">{item.trend}</Badge>
                 </div>
               </div>
             ))}

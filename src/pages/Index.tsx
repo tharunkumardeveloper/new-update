@@ -49,7 +49,7 @@ const Index = () => {
     setUserRole(role);
     // Set demo names based on role
     const names = {
-      athlete: 'Alex Thompson',
+      athlete: 'Ratheesh',
       coach: 'Rajesh Menon',
       admin: 'Arjun Krishnan'
     };

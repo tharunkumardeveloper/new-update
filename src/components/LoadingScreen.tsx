@@ -27,7 +27,7 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 gradient-violet flex flex-col items-center justify-center text-white safe-top safe-bottom">
+    <div className="fixed inset-0 bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex flex-col items-center justify-center text-white safe-top safe-bottom">
       {/* Logo */}
       <div className="mb-12 animate-scale-in">
         <h1 className="text-5xl font-bold text-shadow tracking-tight">
@@ -51,10 +51,6 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
         </p>
       </div>
 
-      {/* Bottom decoration */}
-      <div className="absolute bottom-8 w-full flex justify-center">
-        <div className="w-16 h-1 bg-white/40 rounded-full" />
-      </div>
     </div>
   );
 };

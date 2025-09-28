@@ -27,7 +27,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4 safe-top safe-bottom">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-purple-800 to-purple-900 flex items-center justify-center p-4 safe-top safe-bottom">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in">
@@ -40,22 +40,22 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
         </div>
 
         {/* Auth Card */}
-        <Card className="backdrop-blur-subtle bg-black/20 border-white/10 animate-slide-up">
+        <Card className="backdrop-blur-subtle bg-white/10 border-white/20 animate-slide-up">
           <CardHeader>
             <CardTitle className="text-white text-center">Welcome Back</CardTitle>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 bg-black/50 p-1">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-white/10 p-1">
                 <TabsTrigger 
                   value="signin" 
-                  className="text-white data-[state=active]:bg-white data-[state=active]:text-black data-[state=inactive]:bg-black data-[state=inactive]:text-white transition-all duration-200"
+                  className="text-white data-[state=active]:bg-white data-[state=active]:text-purple-900 data-[state=inactive]:bg-transparent data-[state=inactive]:text-white transition-all duration-200"
                 >
                   Sign In
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup" 
-                  className="text-white data-[state=active]:bg-white data-[state=active]:text-black data-[state=inactive]:bg-black data-[state=inactive]:text-white transition-all duration-200"
+                  className="text-white data-[state=active]:bg-white data-[state=active]:text-purple-900 data-[state=inactive]:bg-transparent data-[state=inactive]:text-white transition-all duration-200"
                 >
                   Sign Up
                 </TabsTrigger>
@@ -68,7 +68,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                     id="email" 
                     type="email" 
                     placeholder="Enter your email"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-white/50"
                   />
                 </div>
                 <div className="space-y-2">
@@ -77,12 +77,12 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                     id="password" 
                     type="password" 
                     placeholder="Enter your password"
-                    className="bg-black/20 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-white/50"
                   />
                 </div>
                 
                 <Button 
-                  className="w-full btn-hero bg-white text-black hover:bg-gray-100" 
+                  className="w-full btn-hero bg-white text-purple-900 hover:bg-gray-100" 
                   disabled={isLoading}
                 >
                   {isLoading ? 'Signing in...' : 'Sign In'}
@@ -98,7 +98,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                 </div>
 
                 <Button 
-                  className="w-full bg-black text-white border border-white/20 hover:bg-gray-900 transition-colors"
+                  className="w-full bg-white/10 text-white border border-white/30 hover:bg-white/20 transition-colors"
                 >
                   <svg className="mr-2 h-4 w-4 fill-white" viewBox="0 0 24 24">
                     <path
@@ -128,7 +128,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                   <Input 
                     id="name" 
                     placeholder="Enter your full name"
-                    className="bg-black/20 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-white/50"
                   />
                 </div>
                 <div className="space-y-2">
@@ -137,7 +137,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                     id="signup-email" 
                     type="email" 
                     placeholder="Enter your email"
-                    className="bg-black/20 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-white/50"
                   />
                 </div>
                 <div className="space-y-2">
@@ -146,7 +146,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                     id="signup-password" 
                     type="password" 
                     placeholder="Create a password"
-                    className="bg-black/20 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-white/50"
                   />
                 </div>
                 <div className="space-y-2">
@@ -155,7 +155,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                     id="mobile" 
                     type="tel" 
                     placeholder="Enter your mobile number"
-                    className="bg-black/20 border-white/20 text-white placeholder:text-white/60"
+                    className="bg-white/10 border-white/30 text-white placeholder:text-white/60 focus:border-white/50"
                   />
                 </div>
 
@@ -168,7 +168,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                         key={role}
                         variant="outline"
                         size="sm"
-                        className="bg-black/20 border-white/20 text-white hover:bg-white/10 text-xs"
+                        className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-xs"
                       >
                         {role}
                       </Button>
@@ -176,7 +176,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                   </div>
                 </div>
 
-                <Button className="w-full btn-hero bg-white text-black hover:bg-gray-100">
+                <Button className="w-full btn-hero bg-white text-purple-900 hover:bg-gray-100">
                   Sign Up
                 </Button>
               </TabsContent>
@@ -184,7 +184,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
 
             {/* Demo Credentials */}
             <div className="mt-8 pt-6 border-t border-white/20">
-              <Card className="bg-black/30 border-white/10">
+              <Card className="bg-white/10 border-white/20">
                 <CardContent className="p-4">
                   <p className="text-white/80 text-sm text-center mb-4 font-medium">
                     Try the demo with these credentials:
@@ -197,7 +197,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                         size="sm"
                         onClick={() => handleDemoLogin(demo.role)}
                         disabled={isLoading}
-                        className="bg-white text-black border-white hover:bg-gray-100 text-xs font-medium"
+                        className="bg-white text-purple-900 border-white hover:bg-gray-100 text-xs font-medium"
                       >
                         {demo.label}
                       </Button>
