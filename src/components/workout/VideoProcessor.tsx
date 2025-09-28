@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, TriangleAlert as AlertTriangle, Shield, Upload, Camera, CircleCheck as CheckCircle, Circle as XCircle, Trophy, Coins } from 'lucide-react';
+import { ArrowLeft, TriangleAlert as AlertTriangle, Shield, Upload, Camera, CircleCheck as CheckCircle, Circle as XCircle, Trophy, Coins, Play } from 'lucide-react';
+import { toast } from '@/components/ui/sonner';
 
 interface VideoProcessorProps {
   videoFile: File | null;
@@ -20,6 +21,7 @@ interface ProcessingResult {
   badSets?: number;
   duration?: string;
   message?: string;
+  videoUrl?: string;
 }
 
 const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }: VideoProcessorProps) => {
@@ -28,6 +30,7 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
   const [result, setResult] = useState<ProcessingResult | null>(null);
   const [showBadgeAnimation, setShowBadgeAnimation] = useState(false);
   const [showCoinsAnimation, setShowCoinsAnimation] = useState(false);
+  const [videoUrl, setVideoUrl] = useState<string>('');
 
   useEffect(() => {
     if (videoFile) {
@@ -38,6 +41,10 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
   const processVideo = async (file: File) => {
     setIsProcessing(true);
     setProgress(0);
+
+    // Create video URL for preview
+    const url = URL.createObjectURL(file);
+    setVideoUrl(url);
 
     // Simulate processing with progress
     const progressInterval = setInterval(() => {
@@ -55,6 +62,23 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
     clearInterval(progressInterval);
     setProgress(100);
 
+    // Get video duration
+    const video = document.createElement('video');
+    video.src = url;
+    
+    const getDuration = (): Promise<string> => {
+      return new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+          const duration = video.duration;
+          const mins = Math.floor(duration / 60);
+          const secs = Math.floor(duration % 60);
+          resolve(`${mins}:${secs.toString().padStart(2, '0')}`);
+        };
+      });
+    };
+
+    const duration = await getDuration();
+
     // Decode filename
     const filename = file.name.toLowerCase();
     const firstLetter = filename.charAt(0);
@@ -63,9 +87,6 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
     const numberMatch = filename.match(/(\d+)-(\d+)/);
     const setsCompleted = numberMatch ? parseInt(numberMatch[1]) : 15;
     const badSets = numberMatch ? parseInt(numberMatch[2]) : 1;
-
-    // Mock video duration (in real app, would get from video metadata)
-    const duration = "2:30";
 
     let processedResult: ProcessingResult;
 
@@ -76,7 +97,8 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
           posture: 'Bad',
           setsCompleted,
           badSets,
-          duration
+          duration,
+          videoUrl: url
         };
         break;
       case 'g':
@@ -85,7 +107,8 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
           posture: 'Good',
           setsCompleted,
           badSets,
-          duration
+          duration,
+          videoUrl: url
         };
         break;
       case 'p':
@@ -97,7 +120,7 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
       case 'a':
         processedResult = {
           type: 'anomaly',
-          message: 'Anomaly Detected. Potential cheating or manipulated video identified.'
+          message: 'Potential cheating or manipulated video identified.'
         };
         break;
       default:
@@ -107,7 +130,8 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
           posture: 'Good',
           setsCompleted,
           badSets,
-          duration
+          duration,
+          videoUrl: url
         };
     }
 
@@ -115,7 +139,13 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
     setIsProcessing(false);
 
     // Handle different result types
-    if (processedResult.type === 'good' || processedResult.type === 'bad') {
+    if (processedResult.type === 'poor') {
+      // Show toast and redirect back
+      toast.error("⚠️ Video could not be processed. Poor lighting or detection issue. Please upload or record another video.");
+      setTimeout(() => {
+        onRetry();
+      }, 2000);
+    } else if (processedResult.type === 'good' || processedResult.type === 'bad') {
       // Show results and trigger rewards
       setTimeout(() => {
         triggerRewards();
@@ -141,13 +171,26 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
 
   const handleSubmitWorkout = () => {
     if (result && (result.type === 'good' || result.type === 'bad')) {
-      onComplete({
-        ...result,
+      // Save to localStorage for Reports tab
+      const workoutData = {
+        id: Date.now(),
         activityName,
+        posture: result.posture,
+        setsCompleted: result.setsCompleted,
+        badSets: result.badSets,
+        duration: result.duration,
         timestamp: new Date().toISOString(),
+        videoUrl: result.videoUrl,
         badgesEarned: ['Form Analyzer', 'Consistency Champion'],
         coinsEarned: result.type === 'good' ? 50 : 25
-      });
+      };
+
+      // Get existing workout history
+      const existingHistory = JSON.parse(localStorage.getItem('workout_history') || '[]');
+      existingHistory.push(workoutData);
+      localStorage.setItem('workout_history', JSON.stringify(existingHistory));
+
+      onComplete(workoutData);
     }
   };
 
@@ -168,30 +211,6 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
             <p className="text-sm text-muted-foreground mt-2">{progress}% complete</p>
           </div>
         </div>
-      </div>
-    );
-  }
-
-  // Poor Detection Notification
-  if (result?.type === 'poor') {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
-          <CardContent className="p-6 text-center">
-            <AlertTriangle className="w-16 h-16 text-warning mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-4">Video Processing Failed</h2>
-            <p className="text-muted-foreground mb-6">{result.message}</p>
-            
-            <div className="space-y-3">
-              <Button onClick={onRetry} className="w-full btn-hero">
-                Try Again
-              </Button>
-              <Button variant="outline" onClick={onBack} className="w-full">
-                Back to Activity
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -241,6 +260,25 @@ const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }
         </div>
 
         <div className="px-4 pb-20 max-w-md mx-auto pt-6 space-y-6">
+          {/* Video Preview - FIRST ELEMENT */}
+          <Card className="card-elevated">
+            <CardContent className="p-4">
+              <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
+                <video 
+                  src={result.videoUrl} 
+                  controls 
+                  className="w-full h-full object-cover"
+                  poster=""
+                >
+                  Your browser does not support the video tag.
+                </video>
+                <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                  Uploaded Video
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Reference Exercise Image */}
           <Card className="card-elevated">
             <CardContent className="p-4">

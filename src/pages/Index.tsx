@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Trophy, Coins } from 'lucide-react';
+import { toast } from '@/components/ui/sonner';
 import LoadingScreen from '@/components/LoadingScreen';
 import AuthFlow from '@/components/auth/AuthFlow';
 import SetupFlow from '@/components/setup/SetupFlow';
@@ -88,6 +89,8 @@ const Index = () => {
   const handleActivityBack = () => {
     setSelectedActivity(null);
     setShowWorkout(false);
+    // Return to training tab when coming back from workout
+    setActiveTab('training');
   };
 
   const handleStartWorkout = () => {

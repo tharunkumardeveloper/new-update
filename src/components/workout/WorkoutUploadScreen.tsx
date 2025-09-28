@@ -25,6 +25,7 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -73,7 +74,7 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
     setRecordingTime(0);
 
     // Start timer
-    const timer = setInterval(() => {
+    recordingTimerRef.current = setInterval(() => {
       setRecordingTime(prev => prev + 1);
     }, 1000);
 
@@ -82,7 +83,6 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         stopRecording();
       }
-      clearInterval(timer);
     }, 60000);
   };
 
@@ -90,6 +90,10 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
+        recordingTimerRef.current = null;
+      }
     }
   };
 
@@ -111,6 +115,10 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
+    }
+    if (recordingTimerRef.current) {
+      clearInterval(recordingTimerRef.current);
+      recordingTimerRef.current = null;
     }
     setMode('selection');
     setRecordedBlob(null);
@@ -299,7 +307,7 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
         <input
           ref={fileInputRef}
           type="file"
-          accept="video/*"
+          accept="video/mp4,video/*"
           onChange={handleFileUpload}
           className="hidden"
         />

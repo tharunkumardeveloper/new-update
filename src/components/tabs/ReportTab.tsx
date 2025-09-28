@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ChartBar as BarChart3, Calendar, Target, TrendingUp, Download, Award, Clock, Zap, Scale, Ruler, Activity } from 'lucide-react';
+import { ChartBar as BarChart3, Calendar, Target, TrendingUp, Download, Award, Clock, Zap, Scale, Ruler, Activity, Play } from 'lucide-react';
 
 interface ReportTabProps {
   userSetupData?: any;
@@ -62,6 +62,15 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
   const bmiValue = parseFloat(calculateBMI());
   const bmiInfo = getBMICategory(bmiValue);
 
+  const formatDate = (timestamp: string) => {
+    return new Date(timestamp).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -82,33 +91,64 @@ const ReportTab = ({ userSetupData }: ReportTabProps) => {
           <CardContent>
             <div className="space-y-3">
               {workoutHistory.slice(-5).reverse().map((workout: any, index: number) => (
-                <div key={workout.id || index} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-lg">💪</span>
+                <Card key={workout.id || index} className="border">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-4 mb-3">
+                      {/* Video Thumbnail */}
+                      <div className="w-16 h-12 bg-black rounded overflow-hidden relative flex-shrink-0">
+                        {workout.videoUrl ? (
+                          <video 
+                            src={workout.videoUrl} 
+                            className="w-full h-full object-cover"
+                            muted
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                            <Play className="w-4 h-4 text-primary" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Workout Info */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm">{workout.activityName}</h4>
+                        <p className="text-xs text-muted-foreground">
+                          {formatDate(workout.timestamp)}
+                        </p>
+                        <div className="flex items-center space-x-2 mt-1">
+                          <Badge 
+                            className={`text-xs ${workout.posture === 'Good' ? 'bg-success/10 text-success border-success' : 'bg-warning/10 text-warning border-warning'}`}
+                            variant="outline"
+                          >
+                            {workout.posture}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-sm">{workout.activityName}</h4>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(workout.timestamp).toLocaleDateString()}
-                      </p>
+                    
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-3 gap-3 text-center">
+                      <div>
+                        <div className="text-sm font-medium">{workout.setsCompleted}</div>
+                        <div className="text-xs text-muted-foreground">Sets</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">{workout.badSets}</div>
+                        <div className="text-xs text-muted-foreground">Bad Sets</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium">{workout.duration}</div>
+                        <div className="text-xs text-muted-foreground">Duration</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-right">
-                    <Badge 
-                      className={`text-xs ${workout.posture === 'Good' ? 'bg-success/10 text-success border-success' : 'bg-warning/10 text-warning border-warning'}`}
-                      variant="outline"
-                    >
-                      {workout.posture}
-                    </Badge>
-                    <p className="text-xs text-muted-foreground mt-1">{workout.setsCompleted} sets</p>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </CardContent>
         </Card>
       )}
+
       {/* BMI Tracker */}
       <Card className="mb-6 card-elevated">
         <CardHeader className="pb-3">
