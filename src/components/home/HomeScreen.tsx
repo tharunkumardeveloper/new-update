@@ -52,9 +52,10 @@ interface HomeScreenProps {
   onProfileOpen?: () => void;
   onSettingsOpen?: () => void;
   onChallengeRedirect?: (challengeId: number) => void;
+  onActivitySelect?: (activity: any) => void;
 }
 
-const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen, onSettingsOpen, onChallengeRedirect }: HomeScreenProps) => {
+const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen, onSettingsOpen, onChallengeRedirect, onActivitySelect }: HomeScreenProps) => {
   const [searchFocus, setSearchFocus] = useState(false);
   const [selectedChallengeFilter, setSelectedChallengeFilter] = useState<string | null>(null);
 
@@ -327,9 +328,7 @@ const HomeScreen = ({ userRole, userName, onTabChange, activeTab, onProfileOpen,
                 key={activity.name} 
                 className="flex-shrink-0 w-48 overflow-hidden cursor-pointer hover:scale-105 transition-transform"
                 onClick={() => {
-                  // This would be passed from parent component
-                  console.log('Selected activity:', activity.name);
-                  // onActivitySelect?.(activity);
+                  onActivitySelect?.(activity);
                 }}
               >
                 {activity.image ? (

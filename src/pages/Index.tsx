@@ -9,6 +9,7 @@ import DiscoverTab from '@/components/tabs/DiscoverTab';
 import ReportTab from '@/components/tabs/ReportTab';
 import RoadmapTab from '@/components/tabs/RoadmapTab';
 import ActivityDetail from '@/components/activities/ActivityDetail';
+import WorkoutInterface from '@/components/workout/WorkoutInterface';
 import ProfilePage from '@/components/profile/ProfilePage';
 import SettingsPage from '@/components/settings/SettingsPage';
 import BadgesScreen from '@/components/badges/BadgesScreen';
@@ -22,6 +23,7 @@ const Index = () => {
   const [userName, setUserName] = useState('');
   const [activeTab, setActiveTab] = useState('training');
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
+  const [showWorkout, setShowWorkout] = useState(false);
   const [isFirstTime, setIsFirstTime] = useState(true);
   const [userSetupData, setUserSetupData] = useState<any>(null);
 
@@ -82,11 +84,11 @@ const Index = () => {
 
   const handleActivityBack = () => {
     setSelectedActivity(null);
+    setShowWorkout(false);
   };
 
   const handleStartWorkout = () => {
-    // This would navigate to workout screen in a real app
-    alert('Workout feature coming soon! This would start the video recording/upload flow.');
+    setShowWorkout(true);
   };
 
   const handleProfileOpen = () => {
@@ -146,6 +148,15 @@ const Index = () => {
 
   // Show activity detail if selected
   if (selectedActivity) {
+    if (showWorkout) {
+      return (
+        <WorkoutInterface
+          activity={selectedActivity}
+          onBack={() => setShowWorkout(false)}
+        />
+      );
+    }
+    
     return (
       <ActivityDetail
         activity={selectedActivity}
@@ -191,6 +202,7 @@ const Index = () => {
               onProfileOpen={handleProfileOpen}
               onSettingsOpen={handleSettingsOpen}
               onChallengeRedirect={handleChallengeRedirect}
+              onActivitySelect={handleActivitySelect}
             />
           ) : userRole === 'coach' ? (
             <CoachDashboard
