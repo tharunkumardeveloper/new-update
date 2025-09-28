@@ -1,0 +1,18 @@
+{
+  "name": "TalentTrack - Athletic Performance Tracker",
+  "short_name": "TalentTrack",
+  "description": "Track your athletic performance with personalized workouts and challenges",
+  "theme_color": "#8B5CF6",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
