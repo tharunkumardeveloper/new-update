@@ -12,10 +12,10 @@ interface AuthFlowProps {
 const AuthFlow = ({ onLogin }: AuthFlowProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const demoCredentials = [
-    { role: 'athlete' as const, email: 'athlete@demo.com', password: 'athlete123', label: 'Athlete' },
-    { role: 'coach' as const, email: 'coach@demo.com', password: 'coach123', label: 'Coach' },
-    { role: 'admin' as const, email: 'admin@demo.com', password: 'admin123', label: 'SAI Admin' },
+  const demoRoles = [
+    { role: 'athlete' as const, label: 'Athlete' },
+    { role: 'coach' as const, label: 'Coach' },
+    { role: 'admin' as const, label: 'SAI Admin' },
   ];
 
   const handleDemoLogin = (role: 'athlete' | 'coach' | 'admin') => {
@@ -27,7 +27,7 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4 safe-top safe-bottom">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4 safe-top safe-bottom">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in">
@@ -46,16 +46,16 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 bg-black/30 p-1">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-black/50 p-1">
                 <TabsTrigger 
                   value="signin" 
-                  className="text-white data-[state=active]:bg-white data-[state=active]:text-black transition-all duration-200"
+                  className="text-white data-[state=active]:bg-white data-[state=active]:text-black data-[state=inactive]:bg-black data-[state=inactive]:text-white transition-all duration-200"
                 >
                   Sign In
                 </TabsTrigger>
                 <TabsTrigger 
                   value="signup" 
-                  className="text-white data-[state=active]:bg-white data-[state=active]:text-black transition-all duration-200"
+                  className="text-white data-[state=active]:bg-white data-[state=active]:text-black data-[state=inactive]:bg-black data-[state=inactive]:text-white transition-all duration-200"
                 >
                   Sign Up
                 </TabsTrigger>
@@ -189,41 +189,19 @@ const AuthFlow = ({ onLogin }: AuthFlowProps) => {
                   <p className="text-white/80 text-sm text-center mb-4 font-medium">
                     Try the demo with these credentials:
                   </p>
-                  <div className="space-y-3">
-                    <div className="bg-black/40 rounded-lg p-3 border border-white/10">
-                      <div className="space-y-2 font-mono text-sm">
-                        <div className="flex justify-between items-center">
-                          <span className="text-white/70">Athlete</span>
-                          <span className="text-white/50">→</span>
-                          <span className="text-white">athlete@demo.com / athlete123</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-white/70">Coach</span>
-                          <span className="text-white/50">→</span>
-                          <span className="text-white">coach@demo.com / coach123</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-white/70">Admin</span>
-                          <span className="text-white/50">→</span>
-                          <span className="text-white">admin@demo.com / admin123</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-3 gap-2">
-                      {demoCredentials.map((cred) => (
-                        <Button
-                          key={cred.role}
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDemoLogin(cred.role)}
-                          disabled={isLoading}
-                          className="bg-white/10 border-white/20 text-white hover:bg-white/20 text-xs"
-                        >
-                          {cred.label}
-                        </Button>
-                      ))}
-                    </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {demoRoles.map((demo) => (
+                      <Button
+                        key={demo.role}
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDemoLogin(demo.role)}
+                        disabled={isLoading}
+                        className="bg-white text-black border-white hover:bg-gray-100 text-xs font-medium"
+                      >
+                        {demo.label}
+                      </Button>
+                    ))}
                   </div>
                 </CardContent>
               </Card>

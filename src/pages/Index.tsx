@@ -4,6 +4,7 @@ import AuthFlow from '@/components/auth/AuthFlow';
 import SetupFlow from '@/components/setup/SetupFlow';
 import HomeScreen from '@/components/home/HomeScreen';
 import CoachDashboard from '@/components/home/CoachDashboard';
+import SAIAdminDashboard from '@/components/home/SAIAdminDashboard';
 import DiscoverTab from '@/components/tabs/DiscoverTab';
 import ReportTab from '@/components/tabs/ReportTab';
 import RoadmapTab from '@/components/tabs/RoadmapTab';
@@ -49,8 +50,8 @@ const Index = () => {
     // Set demo names based on role
     const names = {
       athlete: 'Alex Thompson',
-      coach: 'Sarah Martinez',
-      admin: 'Admin User'
+      coach: 'Rajesh Menon',
+      admin: 'Arjun Krishnan'
     };
     setUserName(names[role]);
     
@@ -116,8 +117,8 @@ const Index = () => {
   };
 
   const renderTabContent = () => {
-    // For coach, use different content structure
-    if (userRole === 'coach') {
+    // For coach and admin, use different content structure
+    if (userRole === 'coach' || userRole === 'admin') {
       return null; // CoachDashboard handles its own content
     }
     
@@ -181,7 +182,7 @@ const Index = () => {
     case 'home':
       return (
         <div className="min-h-screen bg-background">
-          {activeTab === 'training' && userRole !== 'coach' ? (
+          {activeTab === 'training' && userRole === 'athlete' ? (
             <HomeScreen 
               userRole={userRole} 
               userName={userName}
@@ -193,6 +194,14 @@ const Index = () => {
             />
           ) : userRole === 'coach' ? (
             <CoachDashboard
+              userName={userName}
+              onTabChange={setActiveTab}
+              activeTab={activeTab}
+              onProfileOpen={handleProfileOpen}
+              onSettingsOpen={handleSettingsOpen}
+            />
+          ) : userRole === 'admin' ? (
+            <SAIAdminDashboard
               userName={userName}
               onTabChange={setActiveTab}
               activeTab={activeTab}

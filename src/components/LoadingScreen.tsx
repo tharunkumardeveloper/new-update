@@ -5,21 +5,25 @@ interface LoadingScreenProps {
 }
 
 const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
-  const [progress, setProgress] = useState(0);
+  const [phase, setPhase] = useState(1);
+  const [currentText, setCurrentText] = useState("Getting your app ready...");
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(onComplete, 500);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 100);
+    // Phase 1: 2 seconds
+    const phase1Timer = setTimeout(() => {
+      setPhase(2);
+      setCurrentText("Preparing your personalized dashboard...");
+    }, 2000);
 
-    return () => clearInterval(timer);
+    // Phase 2: 2 seconds, then complete
+    const phase2Timer = setTimeout(() => {
+      onComplete();
+    }, 4000);
+
+    return () => {
+      clearTimeout(phase1Timer);
+      clearTimeout(phase2Timer);
+    };
   }, [onComplete]);
 
   return (
@@ -42,17 +46,9 @@ const LoadingScreen = ({ onComplete }: LoadingScreenProps) => {
           <div></div>
         </div>
         
-        <p className="text-white/90 text-lg font-medium">
-          Getting your app ready...
+        <p className="text-white/90 text-lg font-medium transition-all duration-500">
+          {currentText}
         </p>
-
-        {/* Progress Bar */}
-        <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-white/80 rounded-full transition-all duration-300 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
       </div>
 
       {/* Bottom decoration */}

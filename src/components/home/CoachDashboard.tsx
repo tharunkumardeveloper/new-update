@@ -37,10 +37,10 @@ const CoachDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, onSet
 
   // Mock coach data
   const overviewStats = {
-    totalAthletes: 24,
-    activeToday: 18,
-    challengesCompleted: 156,
-    totalBadges: 342
+    totalAthletes: 28,
+    activeToday: 22,
+    challengesCompleted: 189,
+    totalBadges: 412
   };
 
   const weeklyActivity = [
@@ -54,19 +54,22 @@ const CoachDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, onSet
   ];
 
   const challengeDistribution = [
-    { domain: 'Strength', count: 45, color: 'challenge-blue' },
-    { domain: 'Endurance', count: 38, color: 'challenge-purple' },
-    { domain: 'Flexibility', count: 32, color: 'challenge-light-blue' },
-    { domain: 'Calisthenics', count: 28, color: 'challenge-gray' },
-    { domain: 'Para-Athlete', count: 13, color: 'challenge-maroon' }
+    { domain: 'Strength', count: 52, color: 'bg-black text-white' },
+    { domain: 'Endurance', count: 44, color: 'bg-black text-white' },
+    { domain: 'Flexibility', count: 38, color: 'bg-black text-white' },
+    { domain: 'Calisthenics', count: 34, color: 'bg-black text-white' },
+    { domain: 'Para-Athlete', count: 21, color: 'bg-black text-white' }
   ];
 
   const athletes = [
-    { id: 1, name: 'Alex Thompson', email: 'alex@example.com', level: 8, lastActivity: '2 hours ago', challenges: 12, badges: 28 },
-    { id: 2, name: 'Sarah Johnson', email: 'sarah@example.com', level: 6, lastActivity: '1 day ago', challenges: 8, badges: 19 },
-    { id: 3, name: 'Mike Chen', email: 'mike@example.com', level: 10, lastActivity: '30 min ago', challenges: 15, badges: 35 },
-    { id: 4, name: 'Emma Davis', email: 'emma@example.com', level: 4, lastActivity: '3 hours ago', challenges: 6, badges: 14 },
-    { id: 5, name: 'James Wilson', email: 'james@example.com', level: 7, lastActivity: '1 hour ago', challenges: 10, badges: 22 }
+    { id: 1, name: 'Ratheesh Kumar', email: 'ratheesh@sai.gov.in', level: 8, lastActivity: '2 hours ago', challenges: 12, badges: 28 },
+    { id: 2, name: 'Priya Sharma', email: 'priya@sai.gov.in', level: 6, lastActivity: '1 day ago', challenges: 8, badges: 19 },
+    { id: 3, name: 'Akash Patel', email: 'akash@sai.gov.in', level: 10, lastActivity: '30 min ago', challenges: 15, badges: 35 },
+    { id: 4, name: 'Rohan Singh', email: 'rohan@sai.gov.in', level: 4, lastActivity: '3 hours ago', challenges: 6, badges: 14 },
+    { id: 5, name: 'Kavya Nair', email: 'kavya@sai.gov.in', level: 7, lastActivity: '1 hour ago', challenges: 10, badges: 22 },
+    { id: 6, name: 'Arjun Reddy', email: 'arjun@sai.gov.in', level: 9, lastActivity: '45 min ago', challenges: 14, badges: 31 },
+    { id: 7, name: 'Sneha Gupta', email: 'sneha@sai.gov.in', level: 5, lastActivity: '4 hours ago', challenges: 7, badges: 16 },
+    { id: 8, name: 'Vikram Joshi', email: 'vikram@sai.gov.in', level: 11, lastActivity: '1 hour ago', challenges: 18, badges: 42 }
   ];
 
   const filterTags = ['All Levels', 'Beginner', 'Intermediate', 'Advanced', 'Active Today', 'Inactive'];
@@ -74,68 +77,68 @@ const CoachDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, onSet
   const renderDashboardContent = () => (
     <div className="space-y-6">
       {/* Overview Cards */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card className="card-elevated">
+      <div className="grid grid-cols-2 gap-4 mb-6">
+        <Card className="border-2 border-black bg-white">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Users className="w-5 h-5 text-primary mr-2" />
-              <span className="text-2xl font-bold text-primary">{overviewStats.totalAthletes}</span>
+              <Users className="w-5 h-5 text-black mr-2" />
+              <span className="text-2xl font-bold text-black">{overviewStats.totalAthletes}</span>
             </div>
-            <p className="text-sm text-muted-foreground">Total Athletes</p>
+            <p className="text-sm text-black font-medium">Total Athletes</p>
           </CardContent>
         </Card>
 
-        <Card className="card-elevated">
+        <Card className="border-2 border-black bg-white">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Activity className="w-5 h-5 text-success mr-2" />
-              <span className="text-2xl font-bold text-success">{overviewStats.activeToday}</span>
+              <Activity className="w-5 h-5 text-black mr-2" />
+              <span className="text-2xl font-bold text-black">{overviewStats.activeToday}</span>
             </div>
-            <p className="text-sm text-muted-foreground">Active Today</p>
+            <p className="text-sm text-black font-medium">Active Today</p>
           </CardContent>
         </Card>
 
-        <Card className="card-elevated">
+        <Card className="border-2 border-black bg-white">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Target className="w-5 h-5 text-info mr-2" />
-              <span className="text-2xl font-bold text-info">{overviewStats.challengesCompleted}</span>
+              <Target className="w-5 h-5 text-black mr-2" />
+              <span className="text-2xl font-bold text-black">{overviewStats.challengesCompleted}</span>
             </div>
-            <p className="text-sm text-muted-foreground">Challenges Done</p>
+            <p className="text-sm text-black font-medium">Challenges Done</p>
           </CardContent>
         </Card>
 
-        <Card className="card-elevated">
+        <Card className="border-2 border-black bg-white">
           <CardContent className="p-4 text-center">
             <div className="flex items-center justify-center mb-2">
-              <Trophy className="w-5 h-5 text-warning mr-2" />
-              <span className="text-2xl font-bold text-warning">{overviewStats.totalBadges}</span>
+              <Trophy className="w-5 h-5 text-black mr-2" />
+              <span className="text-2xl font-bold text-black">{overviewStats.totalBadges}</span>
             </div>
-            <p className="text-sm text-muted-foreground">Badges Earned</p>
+            <p className="text-sm text-black font-medium">Badges Earned</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Weekly Activity Chart */}
-      <Card className="card-elevated">
+      <Card className="border-2 border-black bg-white">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center space-x-2">
-            <Activity className="w-5 h-5 text-primary" />
-            <span>Weekly Athlete Activity</span>
+            <Activity className="w-5 h-5 text-black" />
+            <span className="text-black">Weekly Athlete Activity</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {weeklyActivity.map((stat) => (
               <div key={stat.day} className="flex items-center space-x-3">
-                <span className="text-sm font-medium w-8">{stat.day}</span>
-                <div className="flex-1 bg-secondary rounded-full h-3 overflow-hidden">
+                <span className="text-sm font-medium w-8 text-black">{stat.day}</span>
+                <div className="flex-1 bg-gray-200 border border-black rounded-full h-3 overflow-hidden">
                   <div 
-                    className="bg-primary h-full rounded-full transition-all duration-500"
+                    className="bg-black h-full rounded-full transition-all duration-500"
                     style={{ width: `${stat.value}%` }}
                   />
                 </div>
-                <span className="text-sm text-muted-foreground w-8">{stat.value}%</span>
+                <span className="text-sm text-black w-8">{stat.value}%</span>
               </div>
             ))}
           </div>
@@ -143,19 +146,19 @@ const CoachDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, onSet
       </Card>
 
       {/* Challenge Distribution */}
-      <Card className="card-elevated">
+      <Card className="border-2 border-black bg-white">
         <CardHeader className="pb-3">
-          <CardTitle>Challenge Distribution</CardTitle>
+          <CardTitle className="text-black">Challenge Distribution</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {challengeDistribution.map((item) => (
-              <div key={item.domain} className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+              <div key={item.domain} className="flex items-center justify-between p-3 rounded-lg border border-black">
                 <div className="flex items-center space-x-3">
-                  <div className={`w-4 h-4 rounded-full ${item.color}`} />
-                  <span className="font-medium">{item.domain}</span>
+                  <div className="w-4 h-4 rounded-full bg-black" />
+                  <span className="font-medium text-black">{item.domain}</span>
                 </div>
-                <Badge variant="outline">{item.count} completed</Badge>
+                <Badge className="bg-black text-white border-black">{item.count} completed</Badge>
               </div>
             ))}
           </div>
@@ -174,7 +177,7 @@ const CoachDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, onSet
             variant={selectedFilter === tag ? 'default' : 'outline'}
             size="sm"
             onClick={() => setSelectedFilter(selectedFilter === tag ? null : tag)}
-            className="rounded-full h-8 text-xs"
+            className="rounded-full h-8 text-xs bg-white text-black border-black hover:bg-black hover:text-white"
           >
             {tag}
           </Button>
@@ -184,28 +187,28 @@ const CoachDashboard = ({ userName, onTabChange, activeTab, onProfileOpen, onSet
       {/* Athletes List */}
       <div className="space-y-3">
         {athletes.map((athlete) => (
-          <Card key={athlete.id} className="card-elevated">
+          <Card key={athlete.id} className="border-2 border-black bg-white">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="font-semibold">{athlete.name}</h3>
-                  <p className="text-sm text-muted-foreground">{athlete.email}</p>
+                  <h3 className="font-semibold text-black">{athlete.name}</h3>
+                  <p className="text-sm text-gray-600">{athlete.email}</p>
                 </div>
-                <Badge variant="outline">Level {athlete.level}</Badge>
+                <Badge className="bg-black text-white border-black">Level {athlete.level}</Badge>
               </div>
               
               <div className="grid grid-cols-3 gap-4 mb-3 text-center">
                 <div>
-                  <div className="text-sm font-medium">{athlete.challenges}</div>
-                  <div className="text-xs text-muted-foreground">Challenges</div>
+                  <div className="text-sm font-medium text-black">{athlete.challenges}</div>
+                  <div className="text-xs text-gray-600">Challenges</div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium">{athlete.badges}</div>
-                  <div className="text-xs text-muted-foreground">Badges</div>
+                  <div className="text-sm font-medium text-black">{athlete.badges}</div>
+                  <div className="text-xs text-gray-600">Badges</div>
                 </div>
                 <div>
-                  <div className="text-sm font-medium">{athlete.lastActivity}</div>
-                  <div className="text-xs text-muted-foreground">Last Active</div>
+                  <div className="text-sm font-medium text-black">{athlete.lastActivity}</div>
+                  <div className="text-xs text-gray-600">Last Active</div>
                 </div>
               </div>
 
