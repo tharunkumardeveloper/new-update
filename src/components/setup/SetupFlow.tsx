@@ -26,6 +26,7 @@ const SetupFlow = ({ onComplete, onSkip }: SetupFlowProps) => {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisStep, setAnalysisStep] = useState(0);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
 
   const analysisSteps = [
     "Analyzing your body metrics",
@@ -67,7 +68,19 @@ const SetupFlow = ({ onComplete, onSkip }: SetupFlowProps) => {
 
   const handleFinalSubmit = () => {
     setIsAnalyzing(true);
+    setAnalysisProgress(0);
     let currentStep = 0;
+    
+    // Animate progress from 0 to 100%
+    const progressTimer = setInterval(() => {
+      setAnalysisProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(progressTimer);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 50); // 5 seconds total (100 steps * 50ms)
     
     const timer = setInterval(() => {
       setAnalysisStep(currentStep);
@@ -75,11 +88,13 @@ const SetupFlow = ({ onComplete, onSkip }: SetupFlowProps) => {
       
       if (currentStep >= analysisSteps.length) {
         clearInterval(timer);
+        clearInterval(progressTimer);
+        setAnalysisProgress(100);
         setTimeout(() => {
           onComplete(userData);
         }, 1000);
       }
-    }, 1200);
+    }, 1000);
   };
 
   const handleNext = () => {
@@ -98,14 +113,24 @@ const SetupFlow = ({ onComplete, onSkip }: SetupFlowProps) => {
 
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen gradient-violet flex flex-col items-center justify-center text-white p-4 safe-top safe-bottom">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col items-center justify-center text-white p-4 safe-top safe-bottom">
         <div className="text-center space-y-8 animate-fade-in">
           {/* Loading Circle */}
           <div className="relative mx-auto w-32 h-32">
             <div className="absolute inset-0 rounded-full border-4 border-white/20"></div>
             <div className="absolute inset-0 rounded-full border-4 border-white border-t-transparent animate-spin"></div>
             <div className="absolute inset-4 rounded-full bg-white/10 flex items-center justify-center">
-              <span className="text-2xl font-bold">100%</span>
+              <span className="text-2xl font-bold font-mono">{analysisProgress}%</span>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="w-80 max-w-sm mx-auto">
+            <div className="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+              <div 
+                className="h-full bg-white rounded-full transition-all duration-100 ease-linear"
+                style={{ width: `${analysisProgress}%` }}
+              />
             </div>
           </div>
 
