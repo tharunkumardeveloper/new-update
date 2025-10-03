@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import WorkoutUploadScreen from "./WorkoutUploadScreen";
 import VideoProcessor from "./VideoProcessor";
+import LiveWorkoutProcessor from "./LiveWorkoutProcessor";
 
 /**
  * Typed shapes so we avoid `any`
@@ -86,7 +87,7 @@ function normalizeActivityKey(name: string): string {
 }
 
 const WorkoutInterface: React.FC<WorkoutInterfaceProps> = ({ activity, onBack }) => {
-  const [stage, setStage] = useState<"upload" | "processing" | "complete">("upload");
+  const [stage, setStage] = useState<"upload" | "processing" | "live" | "complete">("upload");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
 
@@ -131,6 +132,10 @@ const WorkoutInterface: React.FC<WorkoutInterfaceProps> = ({ activity, onBack })
     setSelectedFile(null);
     setVideoSrc(null);
     setStage("upload");
+  };
+
+  const handleStartLive = () => {
+    setStage("live");
   };
 
   const handleWorkoutComplete = (res: ProcessingResultFromVideo) => {
@@ -208,6 +213,16 @@ const WorkoutInterface: React.FC<WorkoutInterfaceProps> = ({ activity, onBack })
     );
   }
 
+  if (stage === "live") {
+    return (
+      <LiveWorkoutProcessor
+        activityKey={normalizeActivityKey(activity.name)}
+        onBack={() => setStage("upload")}
+        onFinish={handleWorkoutComplete}
+      />
+    );
+  }
+
   if (stage === "processing" && videoSrc) {
     return (
       <VideoProcessor
@@ -218,12 +233,12 @@ const WorkoutInterface: React.FC<WorkoutInterfaceProps> = ({ activity, onBack })
     );
   }
 
-  // default: upload/record screen
   return (
     <WorkoutUploadScreen
       activityName={activity.name}
       onBack={onBack}
       onVideoSelected={handleVideoSelected}
+      onStartLive={handleStartLive}
     />
   );
 };

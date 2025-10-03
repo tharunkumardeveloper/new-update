@@ -15,12 +15,14 @@ interface WorkoutUploadScreenProps {
   activityName: string;
   onBack: () => void;
   onVideoSelected: (file: File) => void;
+  onStartLive?: () => void;
 }
 
 const WorkoutUploadScreen: React.FC<WorkoutUploadScreenProps> = ({
   activityName,
   onBack,
   onVideoSelected,
+  onStartLive,
 }) => {
   const [mode, setMode] = useState<"selection" | "recording">("selection");
   const [isRecording, setIsRecording] = useState(false);
@@ -273,8 +275,18 @@ const WorkoutUploadScreen: React.FC<WorkoutUploadScreenProps> = ({
           </CardContent>
         </Card>
 
-        {/* Upload/Record Options */}
+        {/* Upload/Record/Live Options */}
         <div className="space-y-4">
+          {onStartLive && (
+            <Button
+              onClick={onStartLive}
+              className="w-full h-16 btn-hero text-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+            >
+              <Camera className="w-6 h-6 mr-3" />
+              Start Live Session
+            </Button>
+          )}
+
           <Button
             onClick={() => fileInputRef.current?.click()}
             className="w-full h-16 btn-hero text-lg"
