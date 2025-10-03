@@ -1,379 +1,222 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, TriangleAlert as AlertTriangle, Shield, Upload, Camera, CircleCheck as CheckCircle, Circle as XCircle, Trophy, Coins, Play } from 'lucide-react';
-import { toast } from '@/components/ui/sonner';
+import React, { useRef, useState, useEffect } from "react";
 
-interface VideoProcessorProps {
-  videoFile: File | null;
-  activityName: string;
-  onBack: () => void;
-  onRetry: () => void;
-  onComplete: (results: any) => void;
-}
+import {
+  PushupState,
+  initPushupState,
+  pushupFrameAnalysis,
+  PullupState,
+  initPullupState,
+  pullupFrameAnalysis,
+  SitupState,
+  initSitupState,
+  situpFrameAnalysis,
+  VerticalJumpState,
+  initVerticalJumpState,
+  verticalJumpFrameAnalysis,
+  ShuttleState,
+  initShuttleState,
+  shuttleFrameAnalysis,
+  SitReachState,
+  initSitReachState,
+  sitReachFrameAnalysis,
+  summarizePushups,
+  summarizePullups,
+  summarizeSitups,
+  summarizeVerticalJump,
+  summarizeShuttle,
+  summarizeSitReach,
+} from "@/lib/metrics";
 
-interface ProcessingResult {
-  type: 'good' | 'bad' | 'poor' | 'anomaly';
-  posture?: 'Good' | 'Bad';
-  setsCompleted?: number;
-  badSets?: number;
-  duration?: string;
-  message?: string;
-  videoUrl?: string;
-}
+export type ProcessingResult = {
+  type: "good" | "bad";
+  posture: "Good" | "Bad";
+  setsCompleted: number;
+  badSets: number;
+  duration: string;
+  videoUrl: string;
+  message: string;
+  [k: string]: string | number | boolean;
+};
 
-const VideoProcessor = ({ videoFile, activityName, onBack, onRetry, onComplete }: VideoProcessorProps) => {
-  const [isProcessing, setIsProcessing] = useState(true);
-  const [progress, setProgress] = useState(0);
+type Props = {
+  videoSrc: string;
+  activityKey: string;
+  onFinish: (res: ProcessingResult) => void;
+};
+
+const VideoProcessor: React.FC<Props> = ({ videoSrc, activityKey, onFinish }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const poseRef = useRef<Mediapipe.Pose | null>(null);
+
+  const [isProcessing, setIsProcessing] = useState(false);
   const [result, setResult] = useState<ProcessingResult | null>(null);
-  const [showBadgeAnimation, setShowBadgeAnimation] = useState(false);
-  const [showCoinsAnimation, setShowCoinsAnimation] = useState(false);
-  const [videoUrl, setVideoUrl] = useState<string>('');
 
+  /* ---------------- INIT POSE ---------------- */
   useEffect(() => {
-    if (videoFile) {
-      processVideo(videoFile);
+    const pose = new Pose({
+      locateFile: (file: string) =>
+        `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
+    });
+
+    pose.setOptions({
+      modelComplexity: 1,
+      smoothLandmarks: true,
+      minDetectionConfidence: 0.5,
+      minTrackingConfidence: 0.5,
+    });
+
+    pose.onResults((res: Mediapipe.PoseResults) => {
+      drawPose(res);
+    });
+
+    poseRef.current = pose;
+
+    return () => {
+      poseRef.current?.close();
+    };
+  }, []);
+
+  /* ---------------- DRAW ---------------- */
+  function drawPose(res: Mediapipe.PoseResults) {
+    const canvasEl = canvasRef.current;
+    const ctx = canvasEl?.getContext("2d");
+    const videoEl = videoRef.current;
+    if (!ctx || !canvasEl || !videoEl || !res.image) return;
+
+    canvasEl.width = videoEl.videoWidth;
+    canvasEl.height = videoEl.videoHeight;
+
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+    ctx.drawImage(res.image, 0, 0, canvasEl.width, canvasEl.height);
+
+    if (res.poseLandmarks) {
+      drawConnectors(ctx, res.poseLandmarks, POSE_CONNECTIONS, {
+        color: "#00FF00",
+        lineWidth: 2,
+      });
+      drawLandmarks(ctx, res.poseLandmarks, {
+        color: "#FF0000",
+        lineWidth: 1,
+      });
     }
-  }, [videoFile]);
+  }
 
-  const processVideo = async (file: File) => {
+  /* ---------------- PROCESS ---------------- */
+  async function processVideo() {
     setIsProcessing(true);
-    setProgress(0);
 
-    // Create video URL for preview
-    const url = URL.createObjectURL(file);
-    setVideoUrl(url);
+    const videoEl = videoRef.current;
+    const pose = poseRef.current;
+    if (!videoEl || !pose) return;
 
-    // Simulate processing with progress
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 90) {
-          clearInterval(progressInterval);
-          return 90;
+    let activityState:
+      | PushupState
+      | PullupState
+      | SitupState
+      | VerticalJumpState
+      | ShuttleState
+      | SitReachState;
+
+    switch (activityKey) {
+      case "pushups": activityState = initPushupState(); break;
+      case "pullups": activityState = initPullupState(); break;
+      case "situps": activityState = initSitupState(); break;
+      case "verticaljump": activityState = initVerticalJumpState(); break;
+      case "shuttlerun": activityState = initShuttleState(); break;
+      case "sitreach": activityState = initSitReachState(); break;
+      default: throw new Error("Unknown activity");
+    }
+
+    const durationStr = `${Math.round(videoEl.duration)}s`;
+
+    const hiddenCanvas = document.createElement("canvas");
+    const hiddenCtx = hiddenCanvas.getContext("2d");
+    if (!hiddenCtx) return;
+
+    hiddenCanvas.width = videoEl.videoWidth;
+    hiddenCanvas.height = videoEl.videoHeight;
+
+    while (videoEl.currentTime < videoEl.duration) {
+      hiddenCtx.drawImage(videoEl, 0, 0, videoEl.videoWidth, videoEl.videoHeight);
+      await pose.send({ image: hiddenCanvas });
+
+      const landmarks = pose.results?.poseLandmarks;
+      if (landmarks) {
+        const t = videoEl.currentTime;
+        switch (activityKey) {
+          case "pushups": pushupFrameAnalysis(landmarks, videoEl.videoWidth, videoEl.videoHeight, t, activityState as PushupState); break;
+          case "pullups": pullupFrameAnalysis(landmarks, videoEl.videoWidth, videoEl.videoHeight, t, activityState as PullupState); break;
+          case "situps": situpFrameAnalysis(landmarks, videoEl.videoWidth, videoEl.videoHeight, t, activityState as SitupState); break;
+          case "verticaljump": verticalJumpFrameAnalysis(landmarks, videoEl.videoWidth, videoEl.videoHeight, t, activityState as VerticalJumpState); break;
+          case "shuttlerun": shuttleFrameAnalysis(landmarks, videoEl.videoWidth, videoEl.videoHeight, t, activityState as ShuttleState); break;
+          case "sitreach": sitReachFrameAnalysis(landmarks, videoEl.videoWidth, videoEl.videoHeight, t, activityState as SitReachState); break;
         }
-        return prev + 10;
-      });
-    }, 200);
+      }
+      videoEl.currentTime += 1 / 30;
+    }
 
-    // Wait for processing simulation
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    clearInterval(progressInterval);
-    setProgress(100);
+    let summary: Record<string, number | string | boolean> = {};
+    switch (activityKey) {
+      case "pushups": summary = summarizePushups((activityState as PushupState).reps); break;
+      case "pullups": summary = summarizePullups((activityState as PullupState).reps); break;
+      case "situps": summary = summarizeSitups((activityState as SitupState).reps); break;
+      case "verticaljump": summary = summarizeVerticalJump((activityState as VerticalJumpState).jumpData); break;
+      case "shuttlerun": summary = summarizeShuttle(activityState as ShuttleState); break;
+      case "sitreach": summary = summarizeSitReach(activityState as SitReachState); break;
+    }
 
-    // Get video duration
-    const video = document.createElement('video');
-    video.src = url;
-    
-    const getDuration = (): Promise<string> => {
-      return new Promise((resolve) => {
-        video.onloadedmetadata = () => {
-          const duration = video.duration;
-          const mins = Math.floor(duration / 60);
-          const secs = Math.floor(duration % 60);
-          resolve(`${mins}:${secs.toString().padStart(2, '0')}`);
-        };
-      });
+    const setsCompleted =
+      Number(summary["count"] ?? summary["jumpCount"] ?? summary["runs"] ?? 0);
+    const badSets = Number(summary["badReps"] ?? 0);
+    const posture: "Good" | "Bad" = badSets > 0 ? "Bad" : "Good";
+
+    const processedResult: ProcessingResult = {
+      type: posture === "Good" ? "good" : "bad",
+      posture,
+      setsCompleted,
+      badSets,
+      duration: durationStr,
+      videoUrl: videoSrc,
+      message: "Workout summary ready",
+      ...summary,
     };
 
-    const duration = await getDuration();
-
-    // Decode filename
-    const filename = file.name.toLowerCase();
-    const firstLetter = filename.charAt(0);
-    
-    // Extract numbers from filename (e.g., "bratheesh19-1.mp4" -> 19, 1)
-    const numberMatch = filename.match(/(\d+)-(\d+)/);
-    const setsCompleted = numberMatch ? parseInt(numberMatch[1]) : 15;
-    const badSets = numberMatch ? parseInt(numberMatch[2]) : 1;
-
-    let processedResult: ProcessingResult;
-
-    switch (firstLetter) {
-      case 'b':
-        processedResult = {
-          type: 'bad',
-          posture: 'Bad',
-          setsCompleted,
-          badSets,
-          duration,
-          videoUrl: url
-        };
-        break;
-      case 'g':
-        processedResult = {
-          type: 'good',
-          posture: 'Good',
-          setsCompleted,
-          badSets,
-          duration,
-          videoUrl: url
-        };
-        break;
-      case 'p':
-        processedResult = {
-          type: 'poor',
-          message: 'Video could not be processed. Poor lighting or detection issue. Please upload or record another video.'
-        };
-        break;
-      case 'a':
-        processedResult = {
-          type: 'anomaly',
-          message: 'Potential cheating or manipulated video identified.'
-        };
-        break;
-      default:
-        // Default to good for demo
-        processedResult = {
-          type: 'good',
-          posture: 'Good',
-          setsCompleted,
-          badSets,
-          duration,
-          videoUrl: url
-        };
-    }
-
     setResult(processedResult);
+    onFinish(processedResult);
     setIsProcessing(false);
-
-    // Handle different result types
-    if (processedResult.type === 'poor') {
-      // Show toast and redirect back
-      toast.error("⚠️ Video could not be processed. Poor lighting or detection issue. Please upload or record another video.");
-      setTimeout(() => {
-        onRetry();
-      }, 2000);
-    } else if (processedResult.type === 'good' || processedResult.type === 'bad') {
-      // Show results and trigger rewards
-      setTimeout(() => {
-        triggerRewards();
-      }, 1000);
-    }
-  };
-
-  const triggerRewards = () => {
-    // Show badge animation first
-    setShowBadgeAnimation(true);
-    
-    // Then show coins after badge animation
-    setTimeout(() => {
-      setShowCoinsAnimation(true);
-    }, 1500);
-
-    // Hide animations after showing
-    setTimeout(() => {
-      setShowBadgeAnimation(false);
-      setShowCoinsAnimation(false);
-    }, 4000);
-  };
-
-  const handleSubmitWorkout = () => {
-    if (result && (result.type === 'good' || result.type === 'bad')) {
-      // Save to localStorage for Reports tab
-      const workoutData = {
-        id: Date.now(),
-        activityName,
-        posture: result.posture,
-        setsCompleted: result.setsCompleted,
-        badSets: result.badSets,
-        duration: result.duration,
-        timestamp: new Date().toISOString(),
-        videoUrl: result.videoUrl,
-        badgesEarned: ['Form Analyzer', 'Consistency Champion'],
-        coinsEarned: result.type === 'good' ? 50 : 25
-      };
-
-      // Get existing workout history
-      const existingHistory = JSON.parse(localStorage.getItem('workout_history') || '[]');
-      existingHistory.push(workoutData);
-      localStorage.setItem('workout_history', JSON.stringify(existingHistory));
-
-      onComplete(workoutData);
-    }
-  };
-
-  // Processing Screen
-  if (isProcessing) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-6 p-4 max-w-md">
-          <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
-          
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold">Processing Video</h2>
-            <p className="text-muted-foreground">AI is analyzing your {activityName}...</p>
-          </div>
-
-          <div className="w-full max-w-sm">
-            <Progress value={progress} className="h-3" />
-            <p className="text-sm text-muted-foreground mt-2">{progress}% complete</p>
-          </div>
-        </div>
-      </div>
-    );
   }
 
-  // Anomaly Detection Modal
-  if (result?.type === 'anomaly') {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md border-destructive bg-destructive/5">
-          <CardContent className="p-6 text-center">
-            <Shield className="w-16 h-16 text-destructive mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-4 text-destructive">🚨 Anomaly Detected</h2>
-            <p className="text-muted-foreground mb-6">{result.message}</p>
-            
-            <div className="space-y-3">
-              <Button onClick={onRetry} variant="outline" className="w-full">
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Another Video
-              </Button>
-              <Button variant="ghost" onClick={onBack} className="w-full">
-                Exit Workout
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  return (
+    <div className="p-4">
+      <video ref={videoRef} src={videoSrc} controls className="rounded-xl mb-2" />
+      <canvas ref={canvasRef} className="w-full border rounded-xl" />
 
-  // Results Screen (for good/bad results)
-  if (result && (result.type === 'good' || result.type === 'bad')) {
-    return (
-      <div className="min-h-screen bg-background">
-        {/* Header */}
-        <div className="sticky top-0 z-50 bg-background/80 backdrop-blur-subtle border-b safe-top">
-          <div className="px-4 py-4">
-            <div className="flex items-center space-x-3 max-w-md mx-auto">
-              <Button variant="ghost" size="sm" onClick={onBack} className="tap-target">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-              <div className="flex-1">
-                <h1 className="text-lg font-semibold">Workout Results</h1>
-                <p className="text-sm text-muted-foreground">{activityName}</p>
-              </div>
-            </div>
-          </div>
+      <button
+        onClick={processVideo}
+        disabled={isProcessing}
+        className="px-4 py-2 bg-purple-600 text-white rounded-xl mt-3"
+      >
+        {isProcessing ? "Processing..." : "Process Video"}
+      </button>
+
+      {result && (
+        <div className="mt-4 p-4 bg-gray-100 rounded-xl shadow">
+          <h3 className="font-semibold mb-2">Results</h3>
+          <p>Posture: {result.posture}</p>
+          <p>Sets/Count: {result.setsCompleted}</p>
+          {result.badSets !== undefined && <p>Bad Reps: {result.badSets}</p>}
+          <p>Duration: {result.duration}</p>
+          {Object.entries(result).map(([key, val]) => {
+            if (
+              ["type", "posture", "setsCompleted", "badSets", "duration", "videoUrl", "message"].includes(key)
+            ) return null;
+            return <p key={key}>{key}: {String(val)}</p>;
+          })}
         </div>
-
-        <div className="px-4 pb-20 max-w-md mx-auto pt-6 space-y-6">
-          {/* Video Preview - FIRST ELEMENT */}
-          <Card className="card-elevated">
-            <CardContent className="p-4">
-              <div className="aspect-video bg-black rounded-lg overflow-hidden relative">
-                <video 
-                  src={result.videoUrl} 
-                  controls 
-                  className="w-full h-full object-cover"
-                  poster=""
-                >
-                  Your browser does not support the video tag.
-                </video>
-                <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                  Uploaded Video
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Reference Exercise Image */}
-          <Card className="card-elevated">
-            <CardContent className="p-4">
-              <div className="aspect-video bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg flex items-center justify-center mb-3">
-                <div className="text-center">
-                  <div className="text-4xl mb-2">💪</div>
-                  <p className="text-sm text-muted-foreground">Reference: {activityName}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Stats Card */}
-          <Card className="card-elevated">
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                {result.posture === 'Good' ? (
-                  <CheckCircle className="w-5 h-5 text-success" />
-                ) : (
-                  <XCircle className="w-5 h-5 text-warning" />
-                )}
-                <span>Analysis Results</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 rounded-lg bg-secondary/30">
-                  <div className="text-2xl font-bold mb-1">{result.posture}</div>
-                  <p className="text-xs text-muted-foreground">Posture</p>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-secondary/30">
-                  <div className="text-2xl font-bold mb-1">{result.setsCompleted}</div>
-                  <p className="text-xs text-muted-foreground">Sets Completed</p>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-secondary/30">
-                  <div className="text-2xl font-bold mb-1">{result.badSets}</div>
-                  <p className="text-xs text-muted-foreground">Bad Sets</p>
-                </div>
-                <div className="text-center p-3 rounded-lg bg-secondary/30">
-                  <div className="text-2xl font-bold mb-1">{result.duration}</div>
-                  <p className="text-xs text-muted-foreground">Duration</p>
-                </div>
-              </div>
-
-              {/* Posture Badge */}
-              <div className="flex justify-center">
-                <Badge 
-                  className={`${result.posture === 'Good' ? 'bg-success/10 text-success border-success' : 'bg-warning/10 text-warning border-warning'}`}
-                  variant="outline"
-                >
-                  {result.posture === 'Good' ? '✅ Excellent Form' : '⚠️ Form Needs Work'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Submit Button */}
-          <Button onClick={handleSubmitWorkout} className="w-full btn-hero" size="lg">
-            <CheckCircle className="w-5 h-5 mr-2" />
-            Submit Workout
-          </Button>
-        </div>
-
-        {/* Badge Animation Overlay */}
-        {showBadgeAnimation && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-            <div className="text-center animate-scale-in">
-              <div className="w-24 h-24 bg-warning rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-glow">
-                <Trophy className="w-12 h-12 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-white mb-2">Badge Unlocked!</h2>
-              <p className="text-white/80">Form Analyzer</p>
-            </div>
-          </div>
-        )}
-
-        {/* Coins Animation Overlay */}
-        {showCoinsAnimation && (
-          <div className="fixed bottom-20 left-4 right-4 z-50">
-            <Card className="bg-primary text-primary-foreground animate-slide-up">
-              <CardContent className="p-4 flex items-center space-x-3">
-                <Coins className="w-8 h-8 text-yellow-400" />
-                <div>
-                  <p className="font-semibold">Coins Earned!</p>
-                  <p className="text-sm opacity-90">+{result.type === 'good' ? '50' : '25'} coins</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  return null;
+      )}
+    </div>
+  );
 };
 
 export default VideoProcessor;

@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// src/components/WorkoutUploadScreen.tsx
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   ArrowLeft, 
   Upload, 
@@ -8,7 +9,7 @@ import {
   Play,
   Square,
   RotateCcw
-} from 'lucide-react';
+} from "lucide-react";
 
 interface WorkoutUploadScreenProps {
   activityName: string;
@@ -16,56 +17,63 @@ interface WorkoutUploadScreenProps {
   onVideoSelected: (file: File) => void;
 }
 
-const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutUploadScreenProps) => {
-  const [mode, setMode] = useState<'selection' | 'recording'>('selection');
+const WorkoutUploadScreen: React.FC<WorkoutUploadScreenProps> = ({
+  activityName,
+  onBack,
+  onVideoSelected,
+}) => {
+  const [mode, setMode] = useState<"selection" | "recording">("selection");
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const recordingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith('video/')) {
+    if (file && file.type.startsWith("video/")) {
       onVideoSelected(file);
     }
   };
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: 'user' }, 
-        audio: false 
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user" },
+        audio: false,
       });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-      setMode('recording');
+      setMode("recording");
     } catch (error) {
-      console.error('Error accessing camera:', error);
-      alert('Unable to access camera. Please check permissions.');
+      console.error("Error accessing camera:", error);
+      alert("Unable to access camera. Please check permissions.");
     }
   };
 
   const startRecording = () => {
     if (!streamRef.current) return;
 
-    const mediaRecorder = new MediaRecorder(streamRef.current);
+    const mediaRecorder = new MediaRecorder(streamRef.current, {
+      mimeType: "video/webm;codecs=vp8",
+    });
     mediaRecorderRef.current = mediaRecorder;
     const chunks: BlobPart[] = [];
 
-    mediaRecorder.ondataavailable = (event) => {
+    mediaRecorder.ondataavailable = (event: BlobEvent) => {
       if (event.data.size > 0) {
         chunks.push(event.data);
       }
     };
 
     mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
+      const blob = new Blob(chunks, { type: "video/webm" });
       setRecordedBlob(blob);
     };
 
@@ -73,21 +81,20 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
     setIsRecording(true);
     setRecordingTime(0);
 
-    // Start timer
     recordingTimerRef.current = setInterval(() => {
-      setRecordingTime(prev => prev + 1);
+      setRecordingTime((prev) => prev + 1);
     }, 1000);
 
-    // Auto-stop after 60 seconds
+    // Auto-stop after 60s
     setTimeout(() => {
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      if (mediaRecorderRef.current?.state === "recording") {
         stopRecording();
       }
     }, 60000);
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+    if (mediaRecorderRef.current?.state === "recording") {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
       if (recordingTimerRef.current) {
@@ -99,8 +106,11 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
 
   const useRecording = () => {
     if (recordedBlob) {
-      // Create a File object from the blob with a filename that starts with 'g' for good posture
-      const file = new File([recordedBlob], `grecorded-${Date.now()}.webm`, { type: 'video/webm' });
+      const file = new File(
+        [recordedBlob],
+        `recorded-${Date.now()}.webm`,
+        { type: "video/webm" }
+      );
       onVideoSelected(file);
     }
   };
@@ -113,14 +123,14 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
 
   const stopCamera = () => {
     if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     }
     if (recordingTimerRef.current) {
       clearInterval(recordingTimerRef.current);
       recordingTimerRef.current = null;
     }
-    setMode('selection');
+    setMode("selection");
     setRecordedBlob(null);
     setRecordingTime(0);
   };
@@ -128,11 +138,12 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  // Recording Mode
-  if (mode === 'recording') {
+  /* ---------------- RENDER ---------------- */
+
+  if (mode === "recording") {
     return (
       <div className="min-h-screen bg-black flex flex-col">
         {/* Camera View */}
@@ -160,7 +171,7 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
             <p className="text-xs opacity-80">Good lighting required</p>
           </div>
 
-          {/* Recording Preview (if recorded) */}
+          {/* Recording Preview */}
           {recordedBlob && !isRecording && (
             <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
               <div className="text-center text-white space-y-4">
@@ -189,7 +200,11 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
               <Button
                 size="lg"
                 onClick={isRecording ? stopRecording : startRecording}
-                className={`${isRecording ? 'bg-red-500 hover:bg-red-600' : 'bg-primary hover:bg-primary-dark'} text-white px-8`}
+                className={`${
+                  isRecording
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "bg-primary hover:bg-primary-dark"
+                } text-white px-8`}
               >
                 {isRecording ? (
                   <>
@@ -260,17 +275,17 @@ const WorkoutUploadScreen = ({ activityName, onBack, onVideoSelected }: WorkoutU
 
         {/* Upload/Record Options */}
         <div className="space-y-4">
-          <Button 
+          <Button
             onClick={() => fileInputRef.current?.click()}
             className="w-full h-16 btn-hero text-lg"
           >
             <Upload className="w-6 h-6 mr-3" />
             Upload Video
           </Button>
-          
-          <Button 
+
+          <Button
             onClick={startCamera}
-            variant="outline" 
+            variant="outline"
             className="w-full h-16 text-lg border-2 hover:bg-primary hover:text-primary-foreground"
           >
             <Camera className="w-6 h-6 mr-3" />
