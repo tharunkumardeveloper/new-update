@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Square, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, Square, CircleCheck as CheckCircle2, Circle as XCircle } from "lucide-react";
 import { Pose, POSE_CONNECTIONS, NormalizedLandmark, Results } from "@mediapipe/pose";
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { Camera } from "@mediapipe/camera_utils";
